@@ -102,6 +102,9 @@ char* mhdRequestTreat(int* statusCodeP)
   KT_T(StRequest, "In mhdRequestTreat");
   int ix   = 0;
 
+  if (dumpArray == NULL)
+    dumpArray = kjArray(NULL, "dumpArray");
+
   // Parse the incoming payload body, if present
   if (orionldState.in.payload != NULL)
   {
@@ -146,9 +149,6 @@ char* mhdRequestTreat(int* statusCodeP)
     kjChildAdd(dump, uriParams);
   if (httpHeaders != NULL)
     kjChildAdd(dump, httpHeaders);
-
-  if (dumpArray == NULL)
-    dumpArray = kjArray(orionldState.kjsonP, "dumpArray");
 
   if (orionldState.requestTree != NULL)
   {
