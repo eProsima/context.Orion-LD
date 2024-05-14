@@ -60,7 +60,7 @@ void ddsPublish(const char* topicType, const char* topicName, KjNode* entityP)
     //
 
 #ifdef DDS_SLEEP
-    usleep(10000);
+    usleep(5000);
 #endif
 
     KT_V("Publishing on topicType '%s', topicName '%s'", topicType, topicName);
@@ -70,7 +70,7 @@ void ddsPublish(const char* topicType, const char* topicName, KjNode* entityP)
       KT_V("Error publishing on topicType '%s', topicName '%s'", topicType, topicName);
 
 #ifdef DDS_SLEEP
-    usleep(10000);
+    usleep(5000);
 #endif
   }
 

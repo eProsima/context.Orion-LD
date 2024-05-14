@@ -63,7 +63,7 @@ static void* ddsSubscribe2(void* vP)
 
   if (subP->init(spP->topicName))
   {
-    subP->run(1400000);  // EPROS: one single subscriber ... run forever ...
+    subP->run();
   }
 
   KT_V("Deleting the subscription on '%s/%s'", spP->topicType, spP->topicName);

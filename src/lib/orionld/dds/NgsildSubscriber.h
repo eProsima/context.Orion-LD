@@ -273,6 +273,15 @@ class NgsildSubscriber
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
   }
+
+  void run(void)
+  {
+    KT_V("Awaiting notifications");
+    while (1)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(100000));
+    }
+  }
 };
 
 #endif  // SRC_LIB_ORIONLD_DDS_NGSILDSUBSCRIBER_H_
