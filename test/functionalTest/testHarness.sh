@@ -303,7 +303,7 @@ function exitFunction()
               # fi
           fi
 
-          if [ -s /tmp/accumulator_9997_stderr ]
+          if [ -f /tmp/accumulator_9997_stderr ]
           then
               echo "/tmp/accumulator_9997_stderr:"
               echo "-------------------------------------------------"
@@ -313,7 +313,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/accumulator_9997_stdout ]
+          if [ -f /tmp/accumulator_9997_stdout ]
           then
               echo "/tmp/accumulator_9997_stdout:"
               echo "-------------------------------------------------"
@@ -323,7 +323,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/ftClient.log ]
+          if [ -f /tmp/ftClient.log ]
           then
               echo "/tmp/ftClient.log:"
               echo "-------------------------------------------------"
@@ -333,7 +333,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/ftClient_dds.log ]
+          if [ -f /tmp/ftClient_dds.log ]
           then
               echo "/tmp/ftClient_dds.log:"
               echo "-------------------------------------------------"
@@ -343,7 +343,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/orion/logs/ftClient2/ftClient.log ]
+          if [ -f /tmp/orion/logs/ftClient2/ftClient.log ]
           then
               echo "/tmp/orion/logs/ftClient2/ftClient.log:"
               echo "-------------------------------------------------"
@@ -353,7 +353,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/orion/logs/ftClient2/ftClient_dds.log ]
+          if [ -f /tmp/orion/logs/ftClient2/ftClient_dds.log ]
           then
               echo "/tmp/orion/logs/ftClient2/ftClient_dds.log:"
               echo "-------------------------------------------------"
@@ -402,7 +402,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/accumulator_9997_stderr ]
+          if [ -f /tmp/accumulator_9997_stderr ]
           then
               echo "/tmp/accumulator_9997_stderr:"
               echo "-------------------------------------------------"
@@ -412,7 +412,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/accumulator_9997_stdout ]
+          if [ -f /tmp/accumulator_9997_stdout ]
           then
               echo "/tmp/accumulator_9997_stdout:"
               echo "-------------------------------------------------"
@@ -422,7 +422,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/ftClient.log ]
+          if [ -f /tmp/ftClient.log ]
           then
               echo "/tmp/ftClient.log:"
               echo "-------------------------------------------------"
@@ -432,7 +432,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/ftClient_dds.log ]
+          if [ -f /tmp/ftClient_dds.log ]
           then
               echo "/tmp/ftClient_dds.log:"
               echo "-------------------------------------------------"
@@ -442,7 +442,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/orion/logs/ftClient2/ftClient.log ]
+          if [ -f /tmp/orion/logs/ftClient2/ftClient.log ]
           then
               echo "/tmp/orion/logs/ftClient2/ftClient.log:"
               echo "-------------------------------------------------"
@@ -452,7 +452,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/orion/logs/ftClient2/ftClient_dds.log ]
+          if [ -f /tmp/orion/logs/ftClient2/ftClient_dds.log ]
           then
               echo "/tmp/orion/logs/ftClient2/ftClient_dds.log:"
               echo "-------------------------------------------------"
