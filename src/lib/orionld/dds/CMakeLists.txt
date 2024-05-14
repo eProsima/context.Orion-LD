@@ -26,6 +26,7 @@ SET (SOURCES
   NgsildPublisher.cpp
   ddsSubscribe.cpp
   ddsPublish.cpp
+  kjTreeLog.cpp
 )
 
 # Include directories

@@ -46,7 +46,7 @@
 
 #include "NgsildEntity.h"
 
-constexpr uint32_t NgsildEntity_max_cdr_typesize {524UL};
+constexpr uint32_t NgsildEntity_max_cdr_typesize {1320UL};
 constexpr uint32_t NgsildEntity_max_key_cdr_typesize {0UL};
 
 

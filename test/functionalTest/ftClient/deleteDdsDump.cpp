@@ -22,14 +22,18 @@
 *
 * Author: Ken Zangelin
 */
-#include <unistd.h>                                                 // NULL
+#include <unistd.h>                                         // NULL
 
 extern "C"
 {
-#include "kjson/KjNode.h"                                           // KjNode
-#include "kjson/kjFree.h"                                           // kjFree
-#include "kjson/kjBuilder.h"                                        // kjArray
+#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
+#include "kjson/KjNode.h"                                   // KjNode
+#include "kjson/kjFree.h"                                   // kjFree
+#include "kjson/kjBuilder.h"                                // kjArray
 }
+
+#include "common/orionldState.h"                            // orionldState
+#include "common/traceLevels.h"                             // Trace levels for ktrace
 
 
 
@@ -40,9 +44,14 @@ extern KjNode* ddsDumpArray;
 //
 KjNode* deleteDdsDump(int* statusCodeP)
 {
+  KT_T(StRequest, "Resetting DDS Dump");
+
   if (ddsDumpArray != NULL)
-    kjFree(ddsDumpArray);
+    kjFree(ddsDumpArray);  // Crash!
+
+  KT_T(StRequest, "Resetting DDS Dump");
   ddsDumpArray = NULL;
+  KT_T(StRequest, "Resetting DDS Dump");
 
   *statusCodeP = 200;
   return NULL;

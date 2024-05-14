@@ -80,6 +80,21 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                 data.type(), current_alignment);
 
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                data.scope(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                data.createdAt(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                data.modifiedAt(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                data.tenant(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                data.attributes(), current_alignment);
+
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
@@ -100,6 +115,11 @@ eProsima_user_DllExport void serialize(
     scdr
         << eprosima::fastcdr::MemberId(0) << data.id()
         << eprosima::fastcdr::MemberId(1) << data.type()
+        << eprosima::fastcdr::MemberId(2) << data.scope()
+        << eprosima::fastcdr::MemberId(3) << data.createdAt()
+        << eprosima::fastcdr::MemberId(4) << data.modifiedAt()
+        << eprosima::fastcdr::MemberId(5) << data.tenant()
+        << eprosima::fastcdr::MemberId(6) << data.attributes()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -123,6 +143,26 @@ eProsima_user_DllExport void deserialize(
 
                                         case 1:
                                                 dcdr >> data.type();
+                                            break;
+
+                                        case 2:
+                                                dcdr >> data.scope();
+                                            break;
+
+                                        case 3:
+                                                dcdr >> data.createdAt();
+                                            break;
+
+                                        case 4:
+                                                dcdr >> data.modifiedAt();
+                                            break;
+
+                                        case 5:
+                                                dcdr >> data.tenant();
+                                            break;
+
+                                        case 6:
+                                                dcdr >> data.attributes();
                                             break;
 
                     default:

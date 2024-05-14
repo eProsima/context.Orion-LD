@@ -1,6 +1,9 @@
+#ifndef SRC_LIB_ORIONLD_DDS_KJTREELOG_H_
+#define SRC_LIB_ORIONLD_DDS_KJTREELOG_H_
+
 /*
 *
-* Copyright 2024 FIWARE Foundation e.V.
+* Copyright 2022 FIWARE Foundation e.V.
 *
 * This file is part of Orion-LD Context Broker.
 *
@@ -24,36 +27,24 @@
 */
 extern "C"
 {
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
+#include "ktrace/ktTraceLevelCheck.h"                          // ktTraceLevelCheck
+#include "kjson/KjNode.h"                                      // KjNode
 }
-
-#include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
-
-
-
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
 
 
 
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// kjTreeLog -
 //
-KjNode* deleteDump(int* statusCodeP)
-{
-  KT_T(StRequest, "Resetting HTTP Dump");
+#define kjTreeLog2(tree, title, traceLevel)    do { if (ktTraceLevelCheck(traceLevel) == true) kjTreeLogFunction2(tree, title, __FILE__, __LINE__, __FUNCTION__, traceLevel); } while (0)
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
 
-  dumpArray = kjArray(NULL, "dumpArray");
 
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
+// -----------------------------------------------------------------------------
+//
+// kjTreeLogFunction -
+//
+extern void kjTreeLogFunction2(KjNode* tree, const char* msg, const char* fileName, int lineNo, const char* functionName, int traceLevel);
 
-  return NULL;
-}
+#endif  // SRC_LIB_ORIONLD_DDS_KJTREELOG_H_

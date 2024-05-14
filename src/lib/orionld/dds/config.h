@@ -33,6 +33,6 @@
 // Defines for conditional compilation
 //
 #define DDS_RELIABLE
-// #define DDS_SLEEP
+#define DDS_SLEEP
 
 #endif  // SRC_LIB_ORIONLD_DDS_CONFIG_H_

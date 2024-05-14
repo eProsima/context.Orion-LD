@@ -1,24 +1,27 @@
-//
-// Copyright 2024 FIWARE Foundation e.V.
-//
-// This file is part of Orion-LD Context Broker.
-//
-// Orion-LD Context Broker is free software: you can redistribute it and/or
-// modify it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// Orion-LD Context Broker is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-// General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with Orion-LD Context Broker. If not, see http://www.gnu.org/licenses/.
-//
-// For those usages not covered by this license please contact with
-// orionld at fiware dot org
-//
+/*
+*
+* Copyright 2024 FIWARE Foundation e.V.
+*
+* This file is part of Orion-LD Context Broker.
+*
+* Orion-LD Context Broker is free software: you can redistribute it and/or
+* modify it under the terms of the GNU Affero General Public License as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* Orion-LD Context Broker is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+* General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with Orion-LD Context Broker. If not, see http://www.gnu.org/licenses/.
+*
+* For those usages not covered by this license please contact with
+* orionld at fiware dot org
+*
+* Author: David Campo, Ken Zangelin
+*/
 
 // Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
@@ -64,9 +67,8 @@ NgsildEntityPubSubType::NgsildEntityPubSubType(const char* topicType)
 #if FASTCDR_VERSION_MAJOR == 1
     static_cast<uint32_t>(NgsildEntity::getMaxCdrSerializedSize());
 #else
-    NgsildEntity_max_cdr_typesize;
+  NgsildEntity_max_cdr_typesize;
 #endif
-
   type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
   m_typeSize = type_size + 4; /*encapsulation*/
   m_isGetKeyDefined = false;
@@ -86,7 +88,6 @@ NgsildEntityPubSubType::~NgsildEntityPubSubType()
   if (m_keyBuffer != nullptr)
   {
     free(m_keyBuffer);
-    m_keyBuffer = nullptr;
   }
 }
 
@@ -94,7 +95,7 @@ NgsildEntityPubSubType::~NgsildEntityPubSubType()
 
 // -----------------------------------------------------------------------------
 //
-// NgsildEntityPubSubType::~NgsildEntityPubSubType
+// NgsildEntityPubSubType::serialize -
 //
 bool NgsildEntityPubSubType::serialize
 (
@@ -131,20 +132,21 @@ bool NgsildEntityPubSubType::serialize
     return false;
   }
 
-  // Get the serialized length
+    // Get the serialized length
 #if FASTCDR_VERSION_MAJOR == 1
   payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
 #else
   payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
 #endif // FASTCDR_VERSION_MAJOR == 1
-
   return true;
 }
 
+
+
 bool NgsildEntityPubSubType::deserialize
 (
-  SerializedPayload_t* payload,
-  void*                data
+  SerializedPayload_t*  payload,
+  void*                 data
 )
 {
   try
@@ -186,42 +188,58 @@ std::function<uint32_t()> NgsildEntityPubSubType::getSerializedSizeProvider
 )
 {
   return [data, data_representation]() -> uint32_t
-  {
+           {
 #if FASTCDR_VERSION_MAJOR == 1
-    static_cast<void>(data_representation);
-    return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<NgsildEntity*>(data))) +
-    4u /*encapsulation*/;
+             static_cast<void>(data_representation);
+             return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<NgsildEntity*>(data))) +
+             4u /*encapsulation*/;
 #else
-    try
-    {
-      eprosima::fastcdr::CdrSizeCalculator calculator(
-        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-      size_t current_alignment {0};
-      return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                       *static_cast<NgsildEntity*>(data), current_alignment)) +
-        4u /*encapsulation*/;
-    }
-    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-    {
-      return 0;
-    }
+             try
+             {
+               eprosima::fastcdr::CdrSizeCalculator calculator(
+                 data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                 eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+               size_t current_alignment {0};
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                              *static_cast<NgsildEntity*>(data), current_alignment)) +
+                 4u /*encapsulation*/;
+             }
+             catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+             {
+               return 0;
+             }
 #endif // FASTCDR_VERSION_MAJOR == 1
-  };
+           };
 }
 
 
 
+// -----------------------------------------------------------------------------
+//
+// NgsildEntityPubSubType::createData -
+//
 void* NgsildEntityPubSubType::createData()
 {
   return reinterpret_cast<void*>(new NgsildEntity());
 }
 
+
+
+// -----------------------------------------------------------------------------
+//
+// NgsildEntityPubSubType::deleteData -
+//
 void NgsildEntityPubSubType::deleteData(void* data)
 {
   delete(reinterpret_cast<NgsildEntity*>(data));
 }
 
+
+
+// -----------------------------------------------------------------------------
+//
+// NgsildEntityPubSubType::getKey -
+//
 bool NgsildEntityPubSubType::getKey
 (
   void*              data,
@@ -237,7 +255,8 @@ bool NgsildEntityPubSubType::getKey
   NgsildEntity* p_type = static_cast<NgsildEntity*>(data);
 
   // Object that manages the raw buffer.
-  eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer), NgsildEntity_max_key_cdr_typesize);
+  eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
+                                           NgsildEntity_max_key_cdr_typesize);
 
   // Object that serializes the data.
   eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
@@ -267,6 +286,6 @@ bool NgsildEntityPubSubType::getKey
       handle->value[i] = m_keyBuffer[i];
     }
   }
-
   return true;
 }
+

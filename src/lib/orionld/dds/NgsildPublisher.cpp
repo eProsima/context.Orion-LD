@@ -40,13 +40,18 @@
 extern "C"
 {
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
+#include "kalloc/kaAlloc.h"                                 // kaAlloc
 #include "kjson/KjNode.h"                                   // KjNode
 #include "kjson/kjLookup.h"                                 // kjLookup
+#include "kjson/kjRender.h"                                 // kjFastRender
+#include "kjson/kjRenderSize.h"                             // kjFastRenderSize
+#include "kjson/kjBuilder.h"                                // kjChildRemove
 }
 
 #include "orionld/common/traceLevels.h"                     // Trace Levels
 #include "orionld/dds/NgsildPublisher.h"                    // NgsildPublisher
 #include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
+#include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
 
 
 
@@ -147,8 +152,14 @@ bool NgsildPublisher::init(const char* topicName)
 //
 // NgsildPublisher::publish -
 //
+// IMPORTANT:
+//   The input "entityP" is a 100% NGSI-LD Entity.
+//   This function takes care of moving all attributes into the field "attributes", the way we need it for DDS
+//
 bool NgsildPublisher::publish(KjNode* entityP)
 {
+  KT_V("Publishing an entity");
+
   int attempts    = 1;
   int maxAttempts = 1000;  // FIXME: sleeping here for one whole second it just not good enough!!!
 
@@ -158,12 +169,14 @@ bool NgsildPublisher::publish(KjNode* entityP)
     ++attempts;
   }
 
+  KT_V("Publishing an entity");
   if (listener_.ready_ == false)
   {
     KT_W("listener still not ready after waiting for %d milliseconds", attempts);
     return false;
   }
 
+  KT_V("Publishing an entity");
   if (listener_.matched_ <= 0)
   {
     KT_W("listener not matched");
@@ -173,16 +186,61 @@ bool NgsildPublisher::publish(KjNode* entityP)
   if (entityP == NULL)
     KT_X(1, "entityP == NULL");
 
-  KjNode*     idNodeP   = kjLookup(entityP, "id");
-  KjNode*     typeNodeP = kjLookup(entityP, "type");
-  const char* id        = (idNodeP   != NULL)? idNodeP->value.s   : "idNodeP is NULL";
-  const char* type      = (typeNodeP != NULL)? typeNodeP->value.s : "typeNodeP is NULL";
+  KT_V("Publishing an entity");
+  KjNode* tenantNodeP     = kjLookup(entityP, "tenant");
+  KjNode* idNodeP         = kjLookup(entityP, "id");
+  KjNode* typeNodeP       = kjLookup(entityP, "type");
+  KjNode* scopeNodeP      = kjLookup(entityP, "scope");
+  KjNode* createdAtNodeP  = kjLookup(entityP, "createdAt");
+  KjNode* modifiedAtNodeP = kjLookup(entityP, "modifiedAt");
 
-  KT_V("id:   '%s'", id);
-  KT_V("type: '%s'", type);
+  KT_V("Publishing an entity");
+  const char*      tenant      = (tenantNodeP     != NULL)? tenantNodeP->value.s     : NULL;
+  const char*      id          = (idNodeP         != NULL)? idNodeP->value.s         : NULL;
+  const char*      type        = (typeNodeP       != NULL)? typeNodeP->value.s       : NULL;
+  const char*      scope       = (scopeNodeP      != NULL)? scopeNodeP->value.s      : NULL;
+  const long long  createdAt   = (createdAtNodeP  != NULL)? createdAtNodeP->value.i  : 0;
+  const long long  modifiedAt  = (modifiedAtNodeP != NULL)? modifiedAtNodeP->value.i : 0;
 
-  entity_.id(id);
-  entity_.type(type);
+  KT_V("Publishing an entity");
+  if (tenantNodeP     != NULL) kjChildRemove(entityP, tenantNodeP);
+  if (idNodeP         != NULL) kjChildRemove(entityP, idNodeP);
+  if (typeNodeP       != NULL) kjChildRemove(entityP, typeNodeP);
+  if (scopeNodeP      != NULL) kjChildRemove(entityP, scopeNodeP);
+  if (createdAtNodeP  != NULL) kjChildRemove(entityP, createdAtNodeP);
+  if (modifiedAtNodeP != NULL) kjChildRemove(entityP, modifiedAtNodeP);
+
+  // Only attributes left now
+  KT_V("Publishing an entity");
+  char* serialized = NULL;
+  if (entityP->value.firstChildP != NULL)
+  {
+    kjTreeLog2(entityP, "Entity to publish", StDds);
+
+    int size = kjFastRenderSize(entityP);
+
+    KT_V("Publishing an entity");
+    serialized = (char*) malloc(size * 2 + 256);  // free? :)
+    KT_V("Publishing an entity");
+    kjFastRender(entityP, serialized);
+    KT_V("Publishing an entity");
+  }
+
+  KT_V("tenant:     '%s'", tenant);
+  KT_V("id:         '%s'", id);
+  KT_V("type:       '%s'", type);
+  KT_V("scope:      '%s'", scope);
+  KT_V("createdAt:  %lld", createdAt);
+  KT_V("modifiedAt: %lld", modifiedAt);
+  KT_V("attributes: '%s'", serialized);
+
+  if (tenant     != NULL) entity_.tenant(tenant);
+  if (id         != NULL) entity_.id(id);
+  if (type       != NULL) entity_.type(type);
+  if (scope      != NULL) entity_.scope(scope);
+  if (createdAt  != 0)    entity_.createdAt(createdAt);
+  if (modifiedAt != 0)    entity_.modifiedAt(modifiedAt);
+  if (serialized != NULL) entity_.attributes(serialized);
 
   bool b = writer_->write(&entity_);
 

@@ -34,15 +34,15 @@ extern "C"
 #include "kjson/kjRender.h"                                 // kjRender
 #include "kjson/kjRenderSize.h"                             // kjRenderSize
 #include "kjson/kjLookup.h"                                 // kjLookup
-
-#include "common/traceLevels.h"                             // Trace levels for ktrace
 }
+
+#include "common/orionldState.h"                            // orionldState
+#include "common/traceLevels.h"                             // Trace levels for ktrace
 
 
 
 // FIXME: put in header file and include
 extern KjNode*          dumpArray;
-extern __thread Kjson*  kjsonP;
 extern __thread char*   responseText;
 
 
@@ -98,10 +98,8 @@ KjNode* getDump(int* statusCodeP)
   if (dumpArray->value.firstChildP == NULL)
     return dumpArray;
 
-  KT_T(StRequest, "kjsonP at %p", kjsonP);
-
-  int     bufSize      = kjRenderSize(kjsonP, dumpArray);
-  char*   buf          = kaAlloc(kjsonP->kallocP, bufSize);
+  int     bufSize      = kjRenderSize(orionldState.kjsonP, dumpArray);
+  char*   buf          = kaAlloc(&orionldState.kalloc, bufSize);
 
   bzero(buf, bufSize);
 
@@ -167,10 +165,10 @@ KjNode* getDump(int* statusCodeP)
     KT_T(StRequest, "bodyP at %p", bodyP);
     if (bodyP != NULL)
     {
-      int   bodyLen = kjRenderSize(kjsonP, bodyP) + 512;
-      char* body    = kaAlloc(kjsonP->kallocP, bodyLen);
+      int   bodyLen = kjRenderSize(orionldState.kjsonP, bodyP) + 512;
+      char* body    = kaAlloc(orionldState.kjsonP->kallocP, bodyLen);
 
-      kjRender(kjsonP, bodyP, body, bodyLen);
+      kjRender(orionldState.kjsonP, bodyP, body, bodyLen);
       KT_T(StRequest, "body: '%s'", body);
       strcpy(&buf[bufIx], body);
       bufIx += strlen(body);

@@ -25,35 +25,26 @@
 extern "C"
 {
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
 }
 
-#include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
+#include "mhd/mhdStart.h"                                   // mhdStart - initialize MHD and start receiving REST requests
+#include "mhd/mhdConnectionPayloadRead.h"                   // mhdConnectionPayloadRead
 
-
-
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
+#include "ftClient/mhdRequestInit.h"                        // mhdRequestInit
+#include "ftClient/mhdRequestTreat.h"                       // mhdRequestTreat
+#include "ftClient/mhdRequestEnded.h"                       // mhdRequestEnded
+#include "ftClient/mhdInit.h"                               // Own interface
 
 
 
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// mhdInit -
 //
-KjNode* deleteDump(int* statusCodeP)
+void mhdInit(unsigned short port)
 {
-  KT_T(StRequest, "Resetting HTTP Dump");
+  if (mhdStart(port, 4, mhdRequestInit, mhdConnectionPayloadRead, mhdRequestTreat, mhdRequestEnded) == false)
+    KT_X(1, "Unable to start REST interface on port %d", port);
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
-
-  dumpArray = kjArray(NULL, "dumpArray");
-
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
-  return NULL;
+  KT_V("Serving requests on port %d", port);
 }

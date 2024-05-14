@@ -1,25 +1,3 @@
-//
-// Copyright 2024 FIWARE Foundation e.V.
-//
-// This file is part of Orion-LD Context Broker.
-//
-// Orion-LD Context Broker is free software: you can redistribute it and/or
-// modify it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// Orion-LD Context Broker is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-// General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with Orion-LD Context Broker. If not, see http://www.gnu.org/licenses/.
-//
-// For those usages not covered by this license please contact with
-// orionld at fiware dot org
-//
-
 // Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,6 +41,8 @@ using namespace eprosima::fastcdr::exception;
 
 NgsildEntity::NgsildEntity()
 {
+  m_createdAt  = 0;
+  m_modifiedAt = 0;
 }
 
 NgsildEntity::~NgsildEntity()
@@ -74,6 +54,11 @@ NgsildEntity::NgsildEntity(
 {
     m_id = x.m_id;
     m_type = x.m_type;
+    m_scope = x.m_scope;
+    m_createdAt = x.m_createdAt;
+    m_modifiedAt = x.m_modifiedAt;
+    m_tenant = x.m_tenant;
+    m_attributes = x.m_attributes;
 }
 
 NgsildEntity::NgsildEntity(
@@ -81,6 +66,11 @@ NgsildEntity::NgsildEntity(
 {
     m_id = std::move(x.m_id);
     m_type = std::move(x.m_type);
+    m_scope = std::move(x.m_scope);
+    m_createdAt = x.m_createdAt;
+    m_modifiedAt = x.m_modifiedAt;
+    m_tenant = std::move(x.m_tenant);
+    m_attributes = std::move(x.m_attributes);
 }
 
 NgsildEntity& NgsildEntity::operator =(
@@ -89,6 +79,11 @@ NgsildEntity& NgsildEntity::operator =(
 
     m_id = x.m_id;
     m_type = x.m_type;
+    m_scope = x.m_scope;
+    m_createdAt = x.m_createdAt;
+    m_modifiedAt = x.m_modifiedAt;
+    m_tenant = x.m_tenant;
+    m_attributes = x.m_attributes;
     return *this;
 }
 
@@ -98,6 +93,11 @@ NgsildEntity& NgsildEntity::operator =(
 
     m_id = std::move(x.m_id);
     m_type = std::move(x.m_type);
+    m_scope = std::move(x.m_scope);
+    m_createdAt = x.m_createdAt;
+    m_modifiedAt = x.m_modifiedAt;
+    m_tenant = std::move(x.m_tenant);
+    m_attributes = std::move(x.m_attributes);
     return *this;
 }
 
@@ -105,7 +105,12 @@ bool NgsildEntity::operator ==(
         const NgsildEntity& x) const
 {
     return (m_id == x.m_id &&
-           m_type == x.m_type);
+           m_type == x.m_type &&
+           m_scope == x.m_scope &&
+           m_createdAt == x.m_createdAt &&
+           m_modifiedAt == x.m_modifiedAt &&
+           m_tenant == x.m_tenant &&
+           m_attributes == x.m_attributes);
 }
 
 bool NgsildEntity::operator !=(
@@ -189,6 +194,181 @@ const std::string& NgsildEntity::type() const
 std::string& NgsildEntity::type()
 {
     return m_type;
+}
+
+
+/*!
+ * @brief This function copies the value in member scope
+ * @param _scope New value to be copied in member scope
+ */
+void NgsildEntity::scope(
+        const std::string& _scope)
+{
+    m_scope = _scope;
+}
+
+/*!
+ * @brief This function moves the value in member scope
+ * @param _scope New value to be moved in member scope
+ */
+void NgsildEntity::scope(
+        std::string&& _scope)
+{
+    m_scope = std::move(_scope);
+}
+
+/*!
+ * @brief This function returns a constant reference to member scope
+ * @return Constant reference to member scope
+ */
+const std::string& NgsildEntity::scope() const
+{
+    return m_scope;
+}
+
+/*!
+ * @brief This function returns a reference to member scope
+ * @return Reference to member scope
+ */
+std::string& NgsildEntity::scope()
+{
+    return m_scope;
+}
+
+
+/*!
+ * @brief This function sets a value in member createdAt
+ * @param _createdAt New value for member createdAt
+ */
+void NgsildEntity::createdAt(
+        uint64_t _createdAt)
+{
+    m_createdAt = _createdAt;
+}
+
+/*!
+ * @brief This function returns the value of member createdAt
+ * @return Value of member createdAt
+ */
+uint64_t NgsildEntity::createdAt() const
+{
+    return m_createdAt;
+}
+
+/*!
+ * @brief This function returns a reference to member createdAt
+ * @return Reference to member createdAt
+ */
+uint64_t& NgsildEntity::createdAt()
+{
+    return m_createdAt;
+}
+
+
+/*!
+ * @brief This function sets a value in member modifiedAt
+ * @param _modifiedAt New value for member modifiedAt
+ */
+void NgsildEntity::modifiedAt(
+        uint64_t _modifiedAt)
+{
+    m_modifiedAt = _modifiedAt;
+}
+
+/*!
+ * @brief This function returns the value of member modifiedAt
+ * @return Value of member modifiedAt
+ */
+uint64_t NgsildEntity::modifiedAt() const
+{
+    return m_modifiedAt;
+}
+
+/*!
+ * @brief This function returns a reference to member modifiedAt
+ * @return Reference to member modifiedAt
+ */
+uint64_t& NgsildEntity::modifiedAt()
+{
+    return m_modifiedAt;
+}
+
+
+/*!
+ * @brief This function copies the value in member tenant
+ * @param _tenant New value to be copied in member tenant
+ */
+void NgsildEntity::tenant(
+        const std::string& _tenant)
+{
+    m_tenant = _tenant;
+}
+
+/*!
+ * @brief This function moves the value in member tenant
+ * @param _tenant New value to be moved in member tenant
+ */
+void NgsildEntity::tenant(
+        std::string&& _tenant)
+{
+    m_tenant = std::move(_tenant);
+}
+
+/*!
+ * @brief This function returns a constant reference to member tenant
+ * @return Constant reference to member tenant
+ */
+const std::string& NgsildEntity::tenant() const
+{
+    return m_tenant;
+}
+
+/*!
+ * @brief This function returns a reference to member tenant
+ * @return Reference to member tenant
+ */
+std::string& NgsildEntity::tenant()
+{
+    return m_tenant;
+}
+
+
+/*!
+ * @brief This function copies the value in member attributes
+ * @param _attributes New value to be copied in member attributes
+ */
+void NgsildEntity::attributes(
+        const std::string& _attributes)
+{
+    m_attributes = _attributes;
+}
+
+/*!
+ * @brief This function moves the value in member attributes
+ * @param _attributes New value to be moved in member attributes
+ */
+void NgsildEntity::attributes(
+        std::string&& _attributes)
+{
+    m_attributes = std::move(_attributes);
+}
+
+/*!
+ * @brief This function returns a constant reference to member attributes
+ * @return Constant reference to member attributes
+ */
+const std::string& NgsildEntity::attributes() const
+{
+    return m_attributes;
+}
+
+/*!
+ * @brief This function returns a reference to member attributes
+ * @return Reference to member attributes
+ */
+std::string& NgsildEntity::attributes()
+{
+    return m_attributes;
 }
 
 

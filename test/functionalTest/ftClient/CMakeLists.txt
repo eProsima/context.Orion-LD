@@ -21,6 +21,10 @@
 SET (SOURCES
     ftClient.cpp
     ftErrorResponse.cpp
+    mhdRequestInit.cpp
+    mhdRequestTreat.cpp
+    mhdRequestEnded.cpp
+    mhdInit.cpp
     getDump.cpp
     deleteDump.cpp
     die.cpp
@@ -41,6 +45,7 @@ SET (COMMON_STATIC_LIBS
 
 SET (ORIONLD_LIBS
     orionld_mhd
+    orionld_http
     orionld_serviceRoutines
     orionld_service
     orionld_troe
@@ -88,6 +93,7 @@ SET (DYNAMIC_LIBS
 # Include directories
 # ------------------------------------------------------------
 include_directories("${PROJECT_SOURCE_DIR}/src/app")
+include_directories("${PROJECT_SOURCE_DIR}/src/lib")
 include_directories("${PROJECT_SOURCE_DIR}/src/lib/orionld")
 include_directories("${PROJECT_SOURCE_DIR}/test/functionalTest")
 

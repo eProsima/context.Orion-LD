@@ -29,6 +29,7 @@ extern "C"
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
 }
 
+#include "common/orionldState.h"                            // orionldState
 #include "dds/ddsPublish.h"                                 // ddsPublish
 
 #include "ftClient/ftErrorResponse.h"                       // ftErrorResponse
@@ -36,7 +37,6 @@ extern "C"
 
 
 extern __thread KjNode* uriParams;
-extern __thread KjNode* payloadTree;
 // -----------------------------------------------------------------------------
 //
 // postDdsPub -
@@ -56,7 +56,7 @@ KjNode* postDdsPub(int* statusCodeP)
   }
 
   KT_V("Publishing on DDS for the topic %s:%s", ddsTopicType, ddsTopicName);
-  ddsPublish(ddsTopicType, ddsTopicName, payloadTree);
+  ddsPublish(ddsTopicType, ddsTopicName, orionldState.requestTree);
 
   *statusCodeP = 204;
   return NULL;
