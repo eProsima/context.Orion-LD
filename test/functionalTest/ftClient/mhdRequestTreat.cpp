@@ -114,7 +114,7 @@ char* mhdRequestTreat(int* statusCodeP)
   }
 
   // Lookup the service routine and execute it
-  KT_T(StRequest, "Looking up the service routine (%s %s), Thread ID: %d", orionldState.verbString, orionldState.urlPath, gettid());
+  KT_T(StRequest, "Looking up the service routine (%s %s)", orionldState.verbString, orionldState.urlPath);
   while (serviceV[ix].treatP != NULL)
   {
     if ((orionldState.verb == serviceV[ix].verb) && (strcmp(orionldState.urlPath, serviceV[ix].url) == 0))

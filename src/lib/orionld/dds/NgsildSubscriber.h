@@ -154,10 +154,8 @@ class NgsildSubscriber
 
           // Initializing orionldState, to call kjParse (not really necessary, it's overkill)
           orionldStateInit(NULL);
-          KT_T(StDds, "Called orionldStateInit for thread 0x%x", gettid());
 
           // parse the string 'attributes' and add all attributes to 'dump'
-          KT_T(StDds, "Calling kjParse with orionldState (tid: 0x%x)", gettid());
           KjNode* attrsNode = kjParse(orionldState.kjsonP, attributes);
           if (attrsNode != NULL)
             attrsNode = kjClone(NULL, attrsNode);
