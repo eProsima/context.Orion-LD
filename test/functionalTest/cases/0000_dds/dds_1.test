@@ -26,7 +26,6 @@ Test of orionld version service, with branch name
 --SHELL-INIT--
 dbInit CB
 #orionldStart CB -mongocOnly
-killall --quiet ftClient
 ftClientStart -v -t 0-5000
 ftClientStart -v -t 0-5000 --port $FT2_PORT --logDir $FT2_LOG_DIR
 

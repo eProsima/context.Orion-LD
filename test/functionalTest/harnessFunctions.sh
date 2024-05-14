@@ -852,8 +852,8 @@ function ftClientStart()
     shift
   done
 
-  # logMsg "Stopping the FT Client on port $_port"
-  # ftClientStop --port $_port
+  logMsg "Stopping the FT Client on port $_port"
+  ftClientStop --port $_port
 
   #
   # Moving logfile to .old  - should really be done by the ktrace library!
