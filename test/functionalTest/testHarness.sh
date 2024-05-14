@@ -421,6 +421,47 @@ function exitFunction()
               echo
               echo
           fi
+
+          if [ -s /tmp/ftClient.log ]
+          then
+              echo "/tmp/ftClient.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/ftClient.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -s /tmp/ftClient_dds.log ]
+          then
+              echo "/tmp/ftClient_dds.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/ftClient_dds.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -s /tmp/orion/logs/ftClient2/ftClient.log ]
+          then
+              echo "/tmp/orion/logs/ftClient2/ftClient.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/orion/logs/ftClient2/ftClient.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -s /tmp/orion/logs/ftClient2/ftClient_dds.log ]
+          then
+              echo "/tmp/orion/logs/ftClient2/ftClient_dds.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/orion/logs/ftClient2/ftClient_dds.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
       elif [ $exitCode == 1 ] || [ $exitCode == 2 ] || [ $exitCode == 3 ] || [ $exitCode == 4 ] || [ $exitCode == 5 ] || [ $exitCode == 6 ]
       then
           echo
@@ -1257,7 +1298,7 @@ function runTest()
   linesInStderr=$(wc -l $dirname/$filename.shellInit.stderr | awk '{ print $1}' 2> /dev/null)
   if [ "$linesInStderr" != "" ] && [ "$linesInStderr" != "0" ]
   then
-    exitFunction 10 "SHELL-INIT produced output on stderr" $path "stderr not empty" "$dirname/$filename.shellInit.stdout" "Continue" "$dirname/$filename.shellInit.stderr"
+      exitFunction 10 "SHELL-INIT produced output on stderr" $path "stderr not empty" "noDiff" "$dirname/$filename.shellInit.stdout" "Continue" "$dirname/$filename.shellInit.stderr"
     runTestStatus="shell-init-error"
     return
   fi
