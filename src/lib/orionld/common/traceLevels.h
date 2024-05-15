@@ -35,7 +35,8 @@
 typedef enum OrionldTraceLevels
 {
   StMhdInit = 100,
-  StRequest = 200
+  StRequest = 200,
+  StDds
 } OrionldTraceLevels;
 
 #endif  // SRC_LIB_ORIONLD_COMMON_TRACELEVELS_H_

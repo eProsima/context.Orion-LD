@@ -1,3 +1,6 @@
+#ifndef TEST_FUNCTIONALTEST_FTCLIENT_DDSPUBLISH_H_
+#define TEST_FUNCTIONALTEST_FTCLIENT_DDSPUBLISH_H_
+
 /*
 *
 * Copyright 2024 FIWARE Foundation e.V.
@@ -20,40 +23,14 @@
 * For those usages not covered by this license please contact with
 * orionld at fiware dot org
 *
-* Author: Ken Zangelin
+* Author: Ken Zangelin, David Campo, Luis Arturo Frigolet
 */
-extern "C"
-{
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
-}
-
-#include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
-
-
-
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
-
 
 
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// ddsPublish -
 //
-KjNode* deleteDump(int* statusCodeP)
-{
-  KT_T(StRequest, "Resetting HTTP Dump");
+extern void ddsPublish(const char* topicType, const char* topicName);
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
-
-  dumpArray = kjArray(NULL, "dumpArray");
-
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
-  return NULL;
-}
+#endif  // TEST_FUNCTIONALTEST_FTCLIENT_DDSPUBLISH_H_

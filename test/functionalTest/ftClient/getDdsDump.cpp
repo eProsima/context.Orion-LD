@@ -24,36 +24,18 @@
 */
 extern "C"
 {
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
+#include "kjson/KjNode.h"                                   // KjNode
 }
 
-#include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
 
 
-
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
-
-
-
+extern KjNode* ddsDumpArray;
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// getDdsDump -
 //
-KjNode* deleteDump(int* statusCodeP)
+KjNode* getDdsDump(int* statusCodeP)
 {
-  KT_T(StRequest, "Resetting HTTP Dump");
-
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
-
-  dumpArray = kjArray(NULL, "dumpArray");
-
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
-  return NULL;
+  *statusCodeP = 200;
+  return ddsDumpArray;
 }

@@ -22,11 +22,13 @@
 *
 * Author: Ken Zangelin
 */
+#include <microhttpd.h>                                          // MHD
+
 extern "C"
 {
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
+#include "kalloc/kaBufferReset.h"                           // kaBufferReset
 #include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
 }
 
 #include "common/orionldState.h"                            // orionldState
@@ -34,26 +36,37 @@ extern "C"
 
 
 
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
-
-
-
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// mhdRequestEnded -
 //
-KjNode* deleteDump(int* statusCodeP)
+void mhdRequestEnded
+(
+  void*                       cls,
+  MHD_Connection*             connection,
+  void**                      con_cls,
+  MHD_RequestTerminationCode  toe
+)
 {
-  KT_T(StRequest, "Resetting HTTP Dump");
+  KT_T(StRequest, "Request ended");
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
+  kaBufferReset(&orionldState.kalloc, true);
 
-  dumpArray = kjArray(NULL, "dumpArray");
+  if ((orionldState.responseTree != NULL) && (orionldState.kjsonP == NULL))
+    kjFree(orionldState.responseTree);
 
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
+  *con_cls = NULL;
 
-  return NULL;
+  // payloadBodySize  = 0;
+  // contentLength    = 0;
+  // payloadBody      = NULL;
+  // payloadTree      = NULL;
+  // verb             = HTTP_NOVERB;
+  // urlPath          = NULL;
+  // httpHeaders      = NULL;
+  // uriParams        = NULL;
+
+  // Reset kjson/kalloc
+  // kaBufferReset(&ftKalloc, KFALSE);
+  // free(ftKjsonP);
 }

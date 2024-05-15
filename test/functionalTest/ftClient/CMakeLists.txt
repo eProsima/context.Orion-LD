@@ -20,13 +20,21 @@
 
 SET (SOURCES
     ftClient.cpp
+    ftErrorResponse.cpp
+    mhdRequestInit.cpp
+    mhdRequestTreat.cpp
+    mhdRequestEnded.cpp
+    mhdInit.cpp
     getDump.cpp
     deleteDump.cpp
     die.cpp
+    deleteDdsDump.cpp
+    getDdsDump.cpp
+    postDdsSub.cpp
+    postDdsPub.cpp
 )
 
 SET (COMMON_STATIC_LIBS
-    microhttpd.a
     kjson.a
     khash.a
     kalloc.a
@@ -37,11 +45,13 @@ SET (COMMON_STATIC_LIBS
 
 SET (ORIONLD_LIBS
     orionld_mhd
+    orionld_http
     orionld_serviceRoutines
     orionld_service
     orionld_troe
     orionld_kjTree
     orionld_mqtt
+    orionld_dds
     orionld_context
     orionld_contextCache
     orionld_regCache
@@ -70,9 +80,20 @@ SET (STATIC_LIBS
     ${COMMON_STATIC_LIBS}
 )
 
+SET (DYNAMIC_LIBS
+  fastrtps.so
+  fastcdr.so
+  foonathan_memory-0.7.3.so
+  tinyxml2.so
+  crypto.so
+  ssl.so
+  pthread.so
+)
+
 # Include directories
 # ------------------------------------------------------------
 include_directories("${PROJECT_SOURCE_DIR}/src/app")
+include_directories("${PROJECT_SOURCE_DIR}/src/lib")
 include_directories("${PROJECT_SOURCE_DIR}/src/lib/orionld")
 include_directories("${PROJECT_SOURCE_DIR}/test/functionalTest")
 
@@ -84,16 +105,12 @@ link_directories("/usr/lib64/")
 link_directories("/usr/lib/x86_64-linux-gnu")
 
 
-
 # Executable declaration
 # ------------------------------------------------------------
 
 ADD_EXECUTABLE(ftClient ${SOURCES} ${HEADERS})
 
-MESSAGE("ftClient distro: '${DISTRO}'")
-
-
-TARGET_LINK_LIBRARIES(ftClient ${STATIC_LIBS} ${DYNAMIC_LIBS})
+TARGET_LINK_LIBRARIES(ftClient ${STATIC_LIBS} ${DYNAMIC_LIBS} -lmicrohttpd)
 
 IF (${DISTRO} MATCHES "Ubuntu.*")
   MESSAGE("ftClient: INSTALL Ubuntu DISTRO: '${DISTRO}'")

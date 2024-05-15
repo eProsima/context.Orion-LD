@@ -21,9 +21,12 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 
 SET (SOURCES
-    httpHeaderLocationAdd.cpp
-    httpHeaderLinkAdd.cpp
-    verbGet.cpp
+  NgsildEntity.cxx
+  NgsildEntityPubSubTypes.cxx
+  NgsildPublisher.cpp
+  ddsSubscribe.cpp
+  ddsPublish.cpp
+  kjTreeLog.cpp
 )
 
 # Include directories
@@ -33,4 +36,4 @@ include_directories("${PROJECT_SOURCE_DIR}/src/lib")
 
 # Library declaration
 # -----------------------------------------------------------------
-ADD_LIBRARY(orionld_http STATIC ${SOURCES})
+ADD_LIBRARY(orionld_dds  STATIC ${SOURCES})

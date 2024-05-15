@@ -1,3 +1,6 @@
+#ifndef SRC_LIB_ORIONLD_DDS_DDSPUBLISH_H_
+#define SRC_LIB_ORIONLD_DDS_DDSPUBLISH_H_
+
 /*
 *
 * Copyright 2024 FIWARE Foundation e.V.
@@ -20,40 +23,19 @@
 * For those usages not covered by this license please contact with
 * orionld at fiware dot org
 *
-* Author: Ken Zangelin
+* Author: David Campo, Ken Zangelin
 */
 extern "C"
 {
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
+#include "kjson/KjNode.h"                                   // KjNode
 }
-
-#include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
-
-
-
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
 
 
 
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// ddsPublish -
 //
-KjNode* deleteDump(int* statusCodeP)
-{
-  KT_T(StRequest, "Resetting HTTP Dump");
+extern void ddsPublish(const char* topicType, const char* topicName, KjNode* entityP);
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
-
-  dumpArray = kjArray(NULL, "dumpArray");
-
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
-  return NULL;
-}
+#endif  // SRC_LIB_ORIONLD_DDS_DDSPUBLISH_H_

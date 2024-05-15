@@ -231,6 +231,7 @@ function vMsg()
 }
 
 
+
 typeset -i errors
 errors=0
 # -----------------------------------------------------------------------------
@@ -285,11 +286,13 @@ function exitFunction()
           echo  "---------------------------------------"
           echo
 
-          cat /tmp/orionld.log | egrep 'lvl=ERR|lvl=WARN' > /tmp/orionld.err-warn.log
-          echo "------------ Last 30 Lines: ---------------------" >> /tmp/orionld.err-warn.log
-          tail -30 /tmp/orionld.log >> /tmp/orionld.err-warn.log
-          # if [ "$ORIONLD_SUPPRESS_LOG_FILE_OUTPUT" != "YES" ]
-          # then
+          if [ -f /tmp/orionld.log ]
+          then
+              cat /tmp/orionld.log | egrep 'lvl=ERR|lvl=WARN' > /tmp/orionld.err-warn.log
+              echo "------------ Last 30 Lines: ---------------------" >> /tmp/orionld.err-warn.log
+              tail -30 /tmp/orionld.log >> /tmp/orionld.err-warn.log
+              # if [ "$ORIONLD_SUPPRESS_LOG_FILE_OUTPUT" != "YES" ]
+              # then
               echo "Errors and warnings from the orionld log file"
               echo "-------------------------------------------------"
               # cat /tmp/orionld.err-warn.log
@@ -297,9 +300,10 @@ function exitFunction()
               echo "-------------------------------------------------"
               echo
               echo
-          # fi
+              # fi
+          fi
 
-          if [ -s /tmp/accumulator_9997_stderr ]
+          if [ -f /tmp/accumulator_9997_stderr ]
           then
               echo "/tmp/accumulator_9997_stderr:"
               echo "-------------------------------------------------"
@@ -309,7 +313,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/accumulator_9997_stdout ]
+          if [ -f /tmp/accumulator_9997_stdout ]
           then
               echo "/tmp/accumulator_9997_stdout:"
               echo "-------------------------------------------------"
@@ -318,6 +322,47 @@ function exitFunction()
               echo
               echo
           fi
+
+          if [ -f /tmp/ftClient.log ]
+          then
+              echo "/tmp/ftClient.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/ftClient.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -f /tmp/ftClient_dds.log ]
+          then
+              echo "/tmp/ftClient_dds.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/ftClient_dds.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -f /tmp/orion/logs/ftClient2/ftClient.log ]
+          then
+              echo "/tmp/orion/logs/ftClient2/ftClient.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/orion/logs/ftClient2/ftClient.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -f /tmp/orion/logs/ftClient2/ftClient_dds.log ]
+          then
+              echo "/tmp/orion/logs/ftClient2/ftClient_dds.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/orion/logs/ftClient2/ftClient_dds.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
       elif [ $exitCode == 7 ] || [ $exitCode == 8 ] || [ $exitCode == 10 ] || [ $exitCode == 20 ] || [ $exitCode == 11 ]
       then
           echo
@@ -342,7 +387,11 @@ function exitFunction()
           echo
           echo
 
-          cat /tmp/orionld.log | egrep 'lvl=ERR|lvl=WARN' > /tmp/orionld.err-warn.log
+          if [ -f /tmp/orionld.log ]
+          then
+              cat /tmp/orionld.log | egrep 'lvl=ERR|lvl=WARN' > /tmp/orionld.err-warn.log
+          fi
+
           if [ -s /tmp/orionld.err-warn.log ]
           then
               echo "Errors and warnings from the orionld log file"
@@ -353,7 +402,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/accumulator_9997_stderr ]
+          if [ -f /tmp/accumulator_9997_stderr ]
           then
               echo "/tmp/accumulator_9997_stderr:"
               echo "-------------------------------------------------"
@@ -363,7 +412,7 @@ function exitFunction()
               echo
           fi
 
-          if [ -s /tmp/accumulator_9997_stdout ]
+          if [ -f /tmp/accumulator_9997_stdout ]
           then
               echo "/tmp/accumulator_9997_stdout:"
               echo "-------------------------------------------------"
@@ -372,6 +421,47 @@ function exitFunction()
               echo
               echo
           fi
+
+          if [ -f /tmp/ftClient.log ]
+          then
+              echo "/tmp/ftClient.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/ftClient.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -f /tmp/ftClient_dds.log ]
+          then
+              echo "/tmp/ftClient_dds.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/ftClient_dds.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -f /tmp/orion/logs/ftClient2/ftClient.log ]
+          then
+              echo "/tmp/orion/logs/ftClient2/ftClient.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/orion/logs/ftClient2/ftClient.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
+          if [ -f /tmp/orion/logs/ftClient2/ftClient_dds.log ]
+          then
+              echo "/tmp/orion/logs/ftClient2/ftClient_dds.log:"
+              echo "-------------------------------------------------"
+              cat /tmp/orion/logs/ftClient2/ftClient_dds.log
+              echo "-------------------------------------------------"
+              echo
+              echo
+          fi
+
       elif [ $exitCode == 1 ] || [ $exitCode == 2 ] || [ $exitCode == 3 ] || [ $exitCode == 4 ] || [ $exitCode == 5 ] || [ $exitCode == 6 ]
       then
           echo
@@ -692,6 +782,15 @@ then
     exit 1
   fi
 fi
+
+
+
+# -----------------------------------------------------------------------------
+#
+# Directory for ftClient number 2
+#
+vMsg creating directory for ftClient number 2: $FT2_LOG_DIR
+mkdir -p $FT2_LOG_DIR
 
 
 
@@ -1199,7 +1298,7 @@ function runTest()
   linesInStderr=$(wc -l $dirname/$filename.shellInit.stderr | awk '{ print $1}' 2> /dev/null)
   if [ "$linesInStderr" != "" ] && [ "$linesInStderr" != "0" ]
   then
-    exitFunction 10 "SHELL-INIT produced output on stderr" $path "stderr not empty" "$dirname/$filename.shellInit.stdout" "Continue" "$dirname/$filename.shellInit.stderr"
+      exitFunction 10 "SHELL-INIT produced output on stderr" $path "stderr not empty" "noDiff" "$dirname/$filename.shellInit.stdout" "Continue" "$dirname/$filename.shellInit.stderr"
     runTestStatus="shell-init-error"
     return
   fi
@@ -1272,7 +1371,10 @@ function runTest()
     fileCleanup $filename $keep $path
   else
     file=$(basename $path .test)
-    cp /tmp/$BROKER.log $file.$BROKER.log
+    if [ -f /tmp/$BROKER.log ]
+    then
+      cp /tmp/$BROKER.log $file.$BROKER.log
+    fi
     runTestStatus="test-failed"
   fi
 }

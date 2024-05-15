@@ -1,3 +1,6 @@
+#ifndef TEST_FUNCTIONALTEST_FTCLIENT_DELETEDDSDUMP_H_
+#define TEST_FUNCTIONALTEST_FTCLIENT_DELETEDDSDUMP_H_
+
 /*
 *
 * Copyright 2024 FIWARE Foundation e.V.
@@ -24,36 +27,15 @@
 */
 extern "C"
 {
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
+#include "kjson/KjNode.h"                                   // KjNode
 }
-
-#include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
-
-
-
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
 
 
 
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// deleteDdsDump -
 //
-KjNode* deleteDump(int* statusCodeP)
-{
-  KT_T(StRequest, "Resetting HTTP Dump");
+extern KjNode* deleteDdsDump(int* statusCodeP);
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
-
-  dumpArray = kjArray(NULL, "dumpArray");
-
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
-  return NULL;
-}
+#endif  // TEST_FUNCTIONALTEST_FTCLIENT_DELETEDDSDUMP_H_

@@ -68,6 +68,7 @@ MHD_Result mhdRequest
 
   if (*con_cls == NULL)
   {
+    KT_T(StRequest, "-----------------------------------------------------------------------------------------");
     KT_T(StRequest, "Incoming request: %s %s, type I (*con_cls == %p)", method, url, *con_cls);
     *con_cls = &cls;  // to "acknowledge" the first call
 
@@ -96,7 +97,7 @@ MHD_Result mhdRequest
 
     KT_T(StRequest, "Response(%d bytes): '%s'", responseLen, response);
     r = MHD_create_response_from_buffer(responseLen, response, MHD_RESPMEM_MUST_COPY);
-    MHD_queue_response(connection, 200, r);
+    MHD_queue_response(connection, statusCode, r);
     MHD_destroy_response(r);
   }
 

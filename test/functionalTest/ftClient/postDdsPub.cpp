@@ -24,36 +24,40 @@
 */
 extern "C"
 {
+#include "kjson/KjNode.h"                                   // KjNode
+#include "kjson/kjLookup.h"                                 // kjLookup
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
 }
 
 #include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
+#include "dds/ddsPublish.h"                                 // ddsPublish
+
+#include "ftClient/ftErrorResponse.h"                       // ftErrorResponse
 
 
 
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
-
-
-
+extern __thread KjNode* uriParams;
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// postDdsPub -
 //
-KjNode* deleteDump(int* statusCodeP)
+KjNode* postDdsPub(int* statusCodeP)
 {
-  KT_T(StRequest, "Resetting HTTP Dump");
+  KjNode*      ddsTopicTypeNodeP  = (uriParams         != NULL)? kjLookup(uriParams, "ddsTopicType") : NULL;
+  const char*  ddsTopicType       = (ddsTopicTypeNodeP != NULL)? ddsTopicTypeNodeP->value.s : NULL;
+  KjNode*      ddsTopicNameNodeP  = (uriParams         != NULL)? kjLookup(uriParams, "ddsTopicName") : NULL;
+  const char*  ddsTopicName       = (ddsTopicNameNodeP != NULL)? ddsTopicNameNodeP->value.s : NULL;
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
+  if (ddsTopicName == NULL || ddsTopicType == NULL)
+  {
+    KT_E("Both Name and Type of the topic should not be null");
+    *statusCodeP = 400;
+    return ftErrorResponse(400, "URI Param missing", "Both Name and Type of the topic must be present");
+  }
 
-  dumpArray = kjArray(NULL, "dumpArray");
+  KT_V("Publishing on DDS for the topic %s:%s", ddsTopicType, ddsTopicName);
+  ddsPublish(ddsTopicType, ddsTopicName, orionldState.requestTree);
 
   *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
   return NULL;
 }

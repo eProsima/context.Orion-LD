@@ -22,9 +22,12 @@
 *
 * Author: Ken Zangelin
 */
+#include <unistd.h>                                         // NULL
+
 extern "C"
 {
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
+#include "kjson/KjNode.h"                                   // KjNode
 #include "kjson/kjFree.h"                                   // kjFree
 #include "kjson/kjBuilder.h"                                // kjArray
 }
@@ -34,26 +37,22 @@ extern "C"
 
 
 
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
-
-
-
+extern KjNode* ddsDumpArray;
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// deleteDdsDump -
 //
-KjNode* deleteDump(int* statusCodeP)
+KjNode* deleteDdsDump(int* statusCodeP)
 {
-  KT_T(StRequest, "Resetting HTTP Dump");
+  KT_T(StRequest, "Resetting DDS Dump");
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
+  if (ddsDumpArray != NULL)
+    kjFree(ddsDumpArray);  // Crash!
 
-  dumpArray = kjArray(NULL, "dumpArray");
+  KT_T(StRequest, "Resetting DDS Dump");
+  ddsDumpArray = NULL;
+  KT_T(StRequest, "Resetting DDS Dump");
 
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
+  *statusCodeP = 200;
   return NULL;
 }

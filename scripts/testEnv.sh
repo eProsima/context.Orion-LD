@@ -98,12 +98,15 @@ export FT5_PORT=${FT5_PORT:-7705}
 #
 export CB_LOG_DIR=${CB_LOG_DIR:-/var/log/contextBroker}
 export CB2_LOG_DIR=${CB2_LOG_DIR:-/tmp/orion/logs/contextBroker2}
+
 export CP1_LOG_DIR=${CP1_LOG_DIR:-/tmp/orion/logs/contextProvider1}
 export CP2_LOG_DIR=${CP2_LOG_DIR:-/tmp/orion/logs/contextProvider2}
 export CP3_LOG_DIR=${CP3_LOG_DIR:-/tmp/orion/logs/contextProvider3}
 export CP4_LOG_DIR=${CP4_LOG_DIR:-/tmp/orion/logs/contextProvider4}
 export CP5_LOG_DIR=${CP5_LOG_DIR:-/tmp/orion/logs/contextProvider5}
 export CP6_LOG_DIR=${CP5_LOG_DIR:-/tmp/orion/logs/contextProvider6}
+
+export FT2_LOG_DIR=${FT2_LOG_DIR:-/tmp/orion/logs/ftClient2}
 
 
 

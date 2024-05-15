@@ -201,6 +201,7 @@ SET (ORION_LIBS
     orionld_troe
     orionld_kjTree
     orionld_mqtt
+    orionld_dds
     orionld_http
     orionld_context
     orionld_common
@@ -394,6 +395,7 @@ if (error EQUAL 0)
   ADD_SUBDIRECTORY(src/lib/orionld/mongoc)
   ADD_SUBDIRECTORY(src/lib/orionld/payloadCheck)
   ADD_SUBDIRECTORY(src/lib/orionld/mqtt)
+  ADD_SUBDIRECTORY(src/lib/orionld/dds)
   ADD_SUBDIRECTORY(src/lib/orionld/http)
   ADD_SUBDIRECTORY(src/lib/orionld/prometheus)
   ADD_SUBDIRECTORY(src/lib/orionld/legacyDriver)

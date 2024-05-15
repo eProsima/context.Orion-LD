@@ -55,8 +55,8 @@ TARGET_LINK_LIBRARIES(orionld
   ${STATIC_LIBS}
   ${DYNAMIC_LIBS}
   -lmongoclient
+  -lmicrohttpd
   ${Boost_LIBRARIES}
-  ${LIBMICROHTTPD_LIBRARIES}
 )
 
 IF (${DISTRO} MATCHES "Ubuntu.*")

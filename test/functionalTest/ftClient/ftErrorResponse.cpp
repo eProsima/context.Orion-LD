@@ -22,38 +22,30 @@
 *
 * Author: Ken Zangelin
 */
+#include <unistd.h>                                            // NULL
+
 extern "C"
 {
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/kjFree.h"                                   // kjFree
-#include "kjson/kjBuilder.h"                                // kjArray
+#include "kjson/KjNode.h"                                      // KjNode
+#include "kjson/kjBuilder.h"                                   // kjObject, kjInteger, kjString, kjChildAdd
 }
-
-#include "common/orionldState.h"                            // orionldState
-#include "common/traceLevels.h"                             // Trace levels for ktrace
-
-
-
-// FIXME: put in header file and include
-extern KjNode*  dumpArray;
 
 
 
 // -----------------------------------------------------------------------------
 //
-// deleteDump -
+// ftErrorResponse -
 //
-KjNode* deleteDump(int* statusCodeP)
+KjNode* ftErrorResponse(int code, const char* title, const char* detail)
 {
-  KT_T(StRequest, "Resetting HTTP Dump");
+  KjNode* errorP  = kjObject(NULL, NULL);
+  KjNode* codeP   = kjInteger(NULL, "statusCode", code);
+  KjNode* titleP  = kjString(NULL,  "title",      title);
+  KjNode* detailP = kjString(NULL,  "detail",     detail);
 
-  if (dumpArray != NULL)
-    kjFree(dumpArray);
+  kjChildAdd(errorP, codeP);
+  kjChildAdd(errorP, titleP);
+  kjChildAdd(errorP, detailP);
 
-  dumpArray = kjArray(NULL, "dumpArray");
-
-  *statusCodeP = 204;
-  KT_T(StRequest, "Reset HTTP Dump");
-
-  return NULL;
+  return errorP;
 }

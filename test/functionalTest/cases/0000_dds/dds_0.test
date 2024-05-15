@@ -27,6 +27,8 @@ Test of orionld version service, with branch name
 dbInit CB
 orionldStart CB -mongocOnly
 ftClientStart -v -t 200
+mkdir -p /tmp/orion/logs/ftClient2
+ftClientStart -v -t 200 --port $FT2_PORT --logDir $FT2_LOG_DIR
 
 --SHELL--
 
@@ -34,6 +36,7 @@ ftClientStart -v -t 200
 # 01. Create a subscription urn:S1 for notifications to ftClient
 # 02. Create an entity matching the subscription urn:S1
 # 03. Ask ftClient what it has received
+# 04. Ask ftClient2 what it has received
 #
 
 
@@ -75,6 +78,14 @@ echo "====================================="
 orionCurl --url /dump --port $FT_PORT --noPayloadCheck
 echo
 echo
+
+
+echo "04. Ask ftClient2 what it has received"
+echo "======================================"
+orionCurl --url /dump --port $FT2_PORT --noPayloadCheck
+echo
+echo
+
 
 
 --REGEXPECT--
@@ -130,7 +141,18 @@ Link: <https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-contextREGEX(.*)
 
 
 
+04. Ask ftClient2 what it has received
+======================================
+HTTP/1.1 200 OK
+Content-Length: 3
+Date: REGEX(.*)
+
+[]
+
+
+
 --TEARDOWN--
 brokerStop CB
 ftClientStop
+ftClientStop --port $FT2_PORT
 dbDrop CB
