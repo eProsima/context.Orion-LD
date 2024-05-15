@@ -904,9 +904,7 @@ function ftClientStop()
   done
 
   curl localhost:$_port/die > /dev/null 2> /dev/null
-
-  _port=0
-  _verbose=""
+  return 0
 }
 
 

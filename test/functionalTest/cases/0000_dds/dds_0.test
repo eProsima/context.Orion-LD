@@ -27,6 +27,7 @@ Test of orionld version service, with branch name
 dbInit CB
 orionldStart CB -mongocOnly
 ftClientStart -v -t 200
+mkdir -p /tmp/orion/logs/ftClient2
 ftClientStart -v -t 200 --port $FT2_PORT --logDir $FT2_LOG_DIR
 
 --SHELL--
