@@ -86,7 +86,7 @@ class NgsildSubscriber
   TypeSupport              type_;
   DdsNotificationReceiver  listener_;
 
-public:
+ public:
   explicit NgsildSubscriber(const char* topicType)
     : participant_(nullptr)
     , subscriber_(nullptr)

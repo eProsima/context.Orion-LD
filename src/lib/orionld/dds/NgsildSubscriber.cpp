@@ -111,7 +111,7 @@ bool NgsildSubscriber::init(const char* topicName)
   KT_V("Created reader");
   KT_V("Init done");
 
-  return true;  
+  return true;
 }
 
 
