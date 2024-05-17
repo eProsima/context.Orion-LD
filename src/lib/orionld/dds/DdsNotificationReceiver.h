@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_ORIONLD_DDS_NGSILDPUBLISHER_H_
-#define SRC_LIB_ORIONLD_DDS_NGSILDPUBLISHER_H_
+#ifndef SRC_LIB_ORIONLD_DDS_DDSNOTIFICATIONRECEIVER_H_
+#define SRC_LIB_ORIONLD_DDS_DDSNOTIFICATIONRECEIVER_H_
 
 /*
 *
@@ -25,6 +25,7 @@
 *
 */
 
+//
 // Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,29 +39,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+#include "fastdds/dds/domain/DomainParticipant.hpp"
+#include "fastdds/dds/domain/DomainParticipantFactory.hpp"
+#include "fastdds/dds/subscriber/DataReader.hpp"
+#include "fastdds/dds/subscriber/DataReaderListener.hpp"
+#include "fastdds/dds/subscriber/qos/DataReaderQos.hpp"
+#include "fastdds/dds/subscriber/SampleInfo.hpp"
+#include "fastdds/dds/subscriber/Subscriber.hpp"
+#include "fastdds/dds/topic/TypeSupport.hpp"
 
-#include <chrono>
-#include <thread>
-#include <unistd.h>
+#include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
+#include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 
-extern "C"
-{
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/KjNode.h"                                   // KjNode
-}
-
-#include "orionld/common/traceLevels.h"                     // Trace Levels
-
-#include "orionld/dds/NgsildEntityPubSubTypes.h"
-#include "orionld/dds/NgsildEntity.h"
-#include "orionld/dds/DdsNotificationSender.h"              // DdsNotificationSender
 
 using namespace eprosima::fastdds::dds;
 
@@ -68,32 +60,20 @@ using namespace eprosima::fastdds::dds;
 
 // -----------------------------------------------------------------------------
 //
-// NgsildPublisher -
+// DdsNotificationReceiver -
 //
-class NgsildPublisher  // : DataWriterListener
+// FIXME: All the implementation to DdsNotificationReceiver.cpp
+//
+class DdsNotificationReceiver : public DataReaderListener
 {
- private:
-  NgsildEntity          entity_;
-  DomainParticipant*    participant_;
-  Publisher*            publisher_;
-  Topic*                topic_;
-  DataWriter*           writer_;
-  TypeSupport           type_;
-  DdsNotificationSender listener_;
-
  public:
-  explicit NgsildPublisher(const char* topicType)
-    : participant_(nullptr)
-    , publisher_(nullptr)
-    , topic_(nullptr)
-    , writer_(nullptr)
-    , type_(new NgsildEntityPubSubType(topicType))
-  {
-  }
+  DdsNotificationReceiver() : samples_(0)    { }
+  ~DdsNotificationReceiver() override        { }
 
-  virtual ~NgsildPublisher();
-  bool     init(const char* topicName);
-  bool     publish(KjNode* entityP);
+  void             on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override;
+  void             on_data_available(DataReader* reader) override;
+  NgsildEntity     ngsildEntity_;
+  std::atomic_int  samples_;
 };
 
-#endif  // SRC_LIB_ORIONLD_DDS_NGSILDPUBLISHER_H_
+#endif  // SRC_LIB_ORIONLD_DDS_DDSNOTIFICATIONRECEIVER_H_
