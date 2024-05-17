@@ -24,6 +24,9 @@ SET (SOURCES
   NgsildEntity.cxx
   NgsildEntityPubSubTypes.cxx
   NgsildPublisher.cpp
+  NgsildSubscriber.cpp
+  DdsNotificationReceiver.cpp
+  DdsNotificationSender.cpp
   ddsSubscribe.cpp
   ddsPublish.cpp
   kjTreeLog.cpp

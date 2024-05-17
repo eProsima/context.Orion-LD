@@ -51,7 +51,7 @@ typedef struct SubscriberParams
 // ddsSubscribe -
 //
 // EPROS: We would like to have one single subscriber, that subscribes to all DDS notifications
-//        Obviously, we'd need a way to add topic to that subscriber "on the fly"
+//        Obviously, we'd need a way to add topics to that subscriber "on the fly"
 //
 static void* ddsSubscribe2(void* vP)
 {

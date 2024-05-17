@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_ORIONLD_DDS_NGSILDPUBLISHER_H_
-#define SRC_LIB_ORIONLD_DDS_NGSILDPUBLISHER_H_
+#ifndef SRC_LIB_ORIONLD_DDS_DDSNOTIFICATIONSENDER_H_
+#define SRC_LIB_ORIONLD_DDS_DDSNOTIFICATIONSENDER_H_
 
 /*
 *
@@ -39,28 +39,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <chrono>
-#include <thread>
-#include <unistd.h>
-
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-
-extern "C"
-{
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
-#include "kjson/KjNode.h"                                   // KjNode
-}
-
-#include "orionld/common/traceLevels.h"                     // Trace Levels
-
-#include "orionld/dds/NgsildEntityPubSubTypes.h"
-#include "orionld/dds/NgsildEntity.h"
-#include "orionld/dds/DdsNotificationSender.h"              // DdsNotificationSender
 
 using namespace eprosima::fastdds::dds;
 
@@ -68,32 +48,18 @@ using namespace eprosima::fastdds::dds;
 
 // -----------------------------------------------------------------------------
 //
-// NgsildPublisher -
+// DdsNotificationSender -
 //
-class NgsildPublisher  // : DataWriterListener
+class DdsNotificationSender : public DataWriterListener
 {
- private:
-  NgsildEntity          entity_;
-  DomainParticipant*    participant_;
-  Publisher*            publisher_;
-  Topic*                topic_;
-  DataWriter*           writer_;
-  TypeSupport           type_;
-  DdsNotificationSender listener_;
-
  public:
-  explicit NgsildPublisher(const char* topicType)
-    : participant_(nullptr)
-    , publisher_(nullptr)
-    , topic_(nullptr)
-    , writer_(nullptr)
-    , type_(new NgsildEntityPubSubType(topicType))
-  {
-  }
+  bool ready_;
 
-  virtual ~NgsildPublisher();
-  bool     init(const char* topicName);
-  bool     publish(KjNode* entityP);
+  DdsNotificationSender() : ready_(false), matched_(0)  {}
+  ~DdsNotificationSender() override  {}
+
+  void             on_publication_matched(DataWriter*, const PublicationMatchedStatus& info) override;
+  std::atomic_int  matched_;
 };
 
-#endif  // SRC_LIB_ORIONLD_DDS_NGSILDPUBLISHER_H_
+#endif  // SRC_LIB_ORIONLD_DDS_DDSNOTIFICATIONSENDER_H_
