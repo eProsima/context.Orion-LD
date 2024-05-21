@@ -81,6 +81,7 @@ extern "C"
 #include "kjson/kjBufferCreate.h"                           // kjBufferCreate
 #include "kjson/kjFree.h"                                   // kjFree
 #include "kjson/kjLookup.h"                                 // kjLookup
+#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
 }
 
 #include "parseArgs/parseArgs.h"
@@ -245,6 +246,7 @@ char            coreContextVersion[64];
 bool            triggerOperation = false;
 bool            noprom           = false;
 bool            noArrayReduction = false;
+bool            ddsSupport       = false;
 
 
 
@@ -339,6 +341,7 @@ bool            noArrayReduction = false;
 #define CORE_CONTEXT_DESC      "core context version (v1.0|v1.3|v1.4|v1.5|v1.6|v1.7) - v1.6 is default"
 #define NO_PROM_DESC           "run without Prometheus metrics"
 #define NO_ARR_REDUCT_DESC     "skip JSON-LD Array Reduction"
+#define USE_DDS                "turn on DDS support"
 
 
 
@@ -444,6 +447,7 @@ PaArgument paArgs[] =
   { "-lmtmp",                 &lmtmp,                   "TMP_TRACES",                PaBool,    PaHid,  true,            false,  true,             TMPTRACES_DESC           },
   { "-noprom",                &noprom,                  "NO_PROM",                   PaBool,    PaHid,  false,           false,  true,             NO_PROM_DESC             },
   { "-noArrayReduction",      &noArrayReduction,        "NO_ARRAY_REDUCTION",        PaBool,    PaHid,  false,           false,  true,             NO_ARR_REDUCT_DESC       },
+  { "-dds",                   &ddsSupport,              "DDS",                       PaBool,    PaOpt,  false,           false,  true,             USE_DDS                  },
 
   PA_END_OF_ARGS
 };
@@ -1047,6 +1051,24 @@ int main(int argC, char* argV[])
     strncpy(paLogLevel, "DEBUG", sizeof(paLogLevel) - 1);
 
   paParse(paArgs, argC, (char**) argV, 1, false);
+
+
+  //
+  // Initializing the new logging library, kTrace
+  //
+  KBool          kLogToScreen = KTRUE;
+  char*          kTraceLevels = (char*) "0-5000";
+  char*          kLogLevel    = (char*) "DEBUG";
+  KBool          kVerbose     = KTRUE;
+  KBool          kDebug       = KTRUE;
+  KBool       	 kFixme       = KTRUE;
+
+  int kt = ktInit("Orion-LD", paLogDir, kLogToScreen, kLogLevel, kTraceLevels, kVerbose, kDebug, kFixme);
+  if (kt != 0)
+  {
+    fprintf(stderr, "Error initializing logging library\n");
+    exit(1);
+  }
 
   coreContextUrl = coreContextUrlSetup(coreContextVersion);
   if (coreContextUrl == NULL)

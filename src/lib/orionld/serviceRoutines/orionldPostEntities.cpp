@@ -27,6 +27,7 @@
 
 extern "C"
 {
+#include "ktrace/kTrace.h"                                       // KT_*
 #include "kalloc/kaAlloc.h"                                      // kaAlloc
 #include "kjson/KjNode.h"                                        // KjNode
 #include "kjson/kjBuilder.h"                                     // kjString, kjObject, ...
@@ -60,6 +61,7 @@ extern "C"
 #include "orionld/distOp/distOpResponses.h"                      // distOpResponses
 #include "orionld/kjTree/kjChildCount.h"                         // kjChildCount
 #include "orionld/kjTree/kjSort.h"                               // kjStringArraySort
+#include "orionld/dds/ddsPublish.h"                              // ddsPublish
 #include "orionld/serviceRoutines/orionldPostEntities.h"         // Own interface
 
 
@@ -254,6 +256,12 @@ bool orionldPostEntities(void)
   // Must add the sysAttrs to the "Final API Entity" as subscriptions may have "notification::sysAttrs" set to true ...
   //
   sysAttrsToEntity(orionldState.alterations->finalApiEntityWithSysAttrsP);
+
+  if (ddsSupport)
+  {
+    KT_V(("Publishing an entity on DDS"));
+    ddsPublish("NGSI-LD", "NGSI-LD", orionldState.alterations->finalApiEntityP);
+  }
 
   if (cloneForTroeP != NULL)
     orionldState.requestTree = cloneForTroeP;

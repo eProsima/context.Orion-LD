@@ -273,6 +273,10 @@ SET (COMMON_STATIC_LIBS
 )
 
 SET (DYNAMIC_LIBS
+    fastrtps
+    fastcdr
+    foonathan_memory-0.7.3
+    tinyxml2
     prom
     promhttp
     curl

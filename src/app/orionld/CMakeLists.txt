@@ -33,6 +33,7 @@ SET (STATIC_LIBS
     ${ORION_LIBS}
     ${COMMON_STATIC_LIBS}
     kjson.a
+    ktrace.a
 )
 
 # Include directories

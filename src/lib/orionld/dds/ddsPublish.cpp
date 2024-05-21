@@ -37,7 +37,7 @@ extern "C"
 
 // -----------------------------------------------------------------------------
 //
-// namespacea ... (to be removed!)
+// namespaces ... (to be removed!)
 //
 using namespace eprosima::fastdds::dds;
 
