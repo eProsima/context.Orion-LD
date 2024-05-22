@@ -52,9 +52,6 @@ static MHD_Result headerReceive(void* cbDataP, MHD_ValueKind kind, const char* k
 {
   KT_V("Got an HTTP Header: '%s': '%s'", key, value);
 
-  if (httpHeaders == NULL)
-    httpHeaders = kjObject(NULL, "headers");
-
   KjNode* headerP = kjString(NULL, key, value);
   kjChildAdd(httpHeaders, headerP);
 
@@ -92,6 +89,8 @@ MHD_Result mhdRequestInit(MHD_Connection* connection, const char* url, const cha
   orionldState.verbString = (char*) method;
   orionldState.verb       = verbGet(method);
   orionldState.urlPath    = (char*) url;
+
+  httpHeaders = kjObject(NULL, "headers");
 
   MHD_get_connection_values(connection, MHD_HEADER_KIND,       headerReceive,   NULL);
   MHD_get_connection_values(connection, MHD_GET_ARGUMENT_KIND, uriParamReceive, NULL);

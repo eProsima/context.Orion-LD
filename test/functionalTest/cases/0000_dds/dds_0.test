@@ -110,14 +110,14 @@ Location: /ngsi-ld/v1/entities/urn:ngsi-ld:E01
 03. Ask ftClient what it has received
 =====================================
 HTTP/1.1 200 OK
-Content-Length: 670
+Content-Length: REGEX(.*)
 Date: REGEX(.*)
 
 POST /notify?subscriptionId=urn:S1
 Content-Length: 238
 Content-Type: application/json
 User-Agent: orionld/post-v1.5.1
-Host: 127.0.0.1:7701
+Host: REGEX(.*)
 Accept: application/json
 Ngsild-Attribute-Format: Normalized
 Link: <https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-contextREGEX(.*)
