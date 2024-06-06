@@ -24,6 +24,7 @@
 */
 extern "C"
 {
+#include "ktrace/kTrace.h"                                     // KT_*
 #include "kjson/KjNode.h"                                      // KjNode
 #include "kjson/kjLookup.h"                                    // kjLookup
 #include "kjson/kjBuilder.h"                                   // kjArray, ...
@@ -47,7 +48,23 @@ extern "C"
 #include "orionld/mongoc/mongocEntitiesQuery.h"                // mongocEntitiesQuery
 #include "orionld/mongoc/mongocEntitiesUpsert.h"               // mongocEntitiesUpsert
 #include "orionld/notifications/alteration.h"                  // alteration
+#include "orionld/dds/ddsPublish.h"                            // ddsPublish
+#include "orionld/common/eqForDot.h"                           // eqForDot
 #include "orionld/serviceRoutines/orionldPostBatchCreate.h"    // Own interface
+
+
+
+// -----------------------------------------------------------------------------
+//
+// dbModelToApiAttributeNames -
+//
+static void dbModelToApiAttributeNames(KjNode* entityP)
+{
+  for (KjNode* attrP = entityP->value.firstChildP; attrP != NULL; attrP = attrP->next)
+  {
+    eqForDot(attrP->name);
+  }
+}
 
 
 
@@ -170,6 +187,13 @@ bool orionldPostBatchCreate(void)
       KjNode* initialDbEntityP  = NULL;  // FIXME: initialDbEntity might not be NULL
 
       alteration(entityId, entityType, finalApiEntityP, inEntityP, initialDbEntityP);
+
+      if (ddsSupport)
+      {
+        KT_V(("Publishing an entity on DDS"));
+        dbModelToApiAttributeNames(finalApiEntityP);
+        ddsPublish("NGSI-LD", "NGSI-LD", finalApiEntityP);
+      }
     }
 
     inEntityP = next;
