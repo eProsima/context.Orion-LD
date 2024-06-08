@@ -24,14 +24,37 @@
 */
 extern "C"
 {
+#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
 #include "kjson/KjNode.h"                                   // KjNode
 #include "kjson/kjLookup.h"                                 // kjLookup
-#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
+#include "kjson/kjBuilder.h"                                // kjArray, ...
 }
 
 #include "dds/ddsSubscribe.h"                               // ddsSubscribe
 
 #include "ftClient/ftErrorResponse.h"                       // ftErrorResponse
+
+
+
+// -----------------------------------------------------------------------------
+//
+//  ddsDumpArray - accumulating data from DDS notifications
+//
+extern KjNode* ddsDumpArray;
+
+
+
+// -----------------------------------------------------------------------------
+//
+// ddsNotification - callback for notifications over DDS
+//
+void ddsNotification(KjNode* notificationP)
+{
+  if (ddsDumpArray == NULL)
+    ddsDumpArray = kjArray(NULL, "ddsDumpArray");
+
+  kjChildAdd(ddsDumpArray, notificationP);
+}
 
 
 
@@ -55,7 +78,7 @@ KjNode* postDdsSub(int* statusCodeP)
   }
 
   KT_V("Creating DDS Subcription for the topic %s:%s", ddsTopicType, ddsTopicName);
-  ddsSubscribe(ddsTopicType, ddsTopicName);
+  ddsSubscribe(ddsTopicType, ddsTopicName, ddsNotification);
 
   *statusCodeP = 201;
   return NULL;

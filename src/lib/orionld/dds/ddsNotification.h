@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_ORIONLD_DDS_DDSSUBSCRIBE_H_
-#define SRC_LIB_ORIONLD_DDS_DDSSUBSCRIBE_H_
+#ifndef SRC_LIB_ORIONLD_DDS_DDSNOTIFICATION_H_
+#define SRC_LIB_ORIONLD_DDS_DDSNOTIFICATION_H_
 
 /*
 *
@@ -23,16 +23,18 @@
 * For those usages not covered by this license please contact with
 * orionld at fiware dot org
 *
-* Author: David Campo, Ken Zangelin
+* Author: Ken Zangelin
 */
-#include "orionld/dds/DdsNotificationReceiver.h"                   // DdsNotificationFunction
-
+extern "C"
+{
+#include "kjson/KjNode.h"                                   // KjNode
+}
 
 
 // -----------------------------------------------------------------------------
 //
-// ddsSubscribe -
+// ddsNotification -
 //
-extern void ddsSubscribe(const char* topicType, const char* topicName, DdsNotificationFunction callback);
+extern void ddsNotification(KjNode* notificationP);
 
-#endif  // SRC_LIB_ORIONLD_DDS_DDSSUBSCRIBE_H_
+#endif  // SRC_LIB_ORIONLD_DDS_DDSNOTIFICATION_H_

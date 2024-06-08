@@ -29,6 +29,8 @@ SET (SOURCES
   DdsNotificationSender.cpp
   ddsSubscribe.cpp
   ddsPublish.cpp
+  ddsNotification.cpp
+  ddsInit.cpp
   kjTreeLog.cpp
 )
 

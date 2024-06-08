@@ -52,12 +52,8 @@ using namespace eprosima::fastdds::dds;
 
 // -----------------------------------------------------------------------------
 //
-//  ddsDumpArray - accumulating data from DDS notifications
+// on_subscription_matched -
 //
-extern KjNode* ddsDumpArray;
-
-
-
 void DdsNotificationReceiver::on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info)
 {
   if (info.current_count_change == 1)
@@ -68,6 +64,12 @@ void DdsNotificationReceiver::on_subscription_matched(DataReader*, const Subscri
     KT_T(StDds, "'%d' is not a valid value for SubscriptionMatchedStatus current count change", info.current_count_change);
 }
 
+
+
+// -----------------------------------------------------------------------------
+//
+// on_data_available -
+//
 void DdsNotificationReceiver::on_data_available(DataReader* reader)
 {
   SampleInfo info;
@@ -91,7 +93,7 @@ void DdsNotificationReceiver::on_data_available(DataReader* reader)
       //
       // Accumulate notifications
       //
-      KjNode* dump         = kjObject(NULL, "item");  // No name as it is part of an array
+      KjNode* notification         = kjObject(NULL, "item");  // No name as it is part of an array
       KjNode* tenantP      = (ngsildEntity_.tenant()     != "")? kjString(NULL,   "tenant",     ngsildEntity_.tenant().c_str()) : NULL;
       KjNode* idP          = (ngsildEntity_.id()         != "")? kjString(NULL,   "id",         ngsildEntity_.id().c_str())     : NULL;
       KjNode* typeP        = (ngsildEntity_.type()       != "")? kjString(NULL,   "type",       ngsildEntity_.type().c_str())   : NULL;
@@ -100,12 +102,12 @@ void DdsNotificationReceiver::on_data_available(DataReader* reader)
       KjNode* modifiedAtP  = (ngsildEntity_.modifiedAt() != 0)?  kjInteger(NULL,  "modifiedAt", ngsildEntity_.modifiedAt())     : NULL;
       char*   attributes   = (ngsildEntity_.attributes() != "")? (char*) ngsildEntity_.attributes().c_str() : NULL;
 
-      if (tenantP     != NULL)  kjChildAdd(dump, tenantP);
-      if (idP         != NULL)  kjChildAdd(dump, idP);
-      if (typeP       != NULL)  kjChildAdd(dump, typeP);
-      if (scopeP      != NULL)  kjChildAdd(dump, scopeP);
-      if (createdAtP  != NULL)  kjChildAdd(dump, createdAtP);
-      if (modifiedAtP != NULL)  kjChildAdd(dump, modifiedAtP);
+      if (tenantP     != NULL)  kjChildAdd(notification, tenantP);
+      if (idP         != NULL)  kjChildAdd(notification, idP);
+      if (typeP       != NULL)  kjChildAdd(notification, typeP);
+      if (scopeP      != NULL)  kjChildAdd(notification, scopeP);
+      if (createdAtP  != NULL)  kjChildAdd(notification, createdAtP);
+      if (modifiedAtP != NULL)  kjChildAdd(notification, modifiedAtP);
 
       if (attributes != NULL)
       {
@@ -114,26 +116,24 @@ void DdsNotificationReceiver::on_data_available(DataReader* reader)
         // Initializing orionldState, to call kjParse (not really necessary, it's overkill)
         orionldStateInit(NULL);
 
-        // parse the string 'attributes' and add all attributes to 'dump'
+        // parse the string 'attributes' and add all attributes to 'notification'
         KjNode* attrsNode = kjParse(orionldState.kjsonP, attributes);
         if (attrsNode != NULL)
           attrsNode = kjClone(NULL, attrsNode);
         KT_T(StDds, "After kjParse");
 
-        kjTreeLog2(attrsNode, "attrsNode", StDds);
-        kjTreeLog2(dump, "dump w/o attrs", StDds);
-        // Concatenate the attributes to the "dump entity"
-        dump->lastChild->next = attrsNode->value.firstChildP;
-        dump->lastChild       = attrsNode->lastChild;
-        kjTreeLog2(dump, "dump with attrs", StDds);
+        // Concatenate the attributes to the "notification entity"
+        notification->lastChild->next = attrsNode->value.firstChildP;
+        notification->lastChild       = attrsNode->lastChild;
+      }
+
+      if (callback_ != NULL)
+      {
+        KT_T(StDds, "Calling notification callback function");
+        callback_(notification);
       }
       else
-        KT_T(StDds, "Entity Id: %s has no attributes", ngsildEntity_.id().c_str());
-
-      if (ddsDumpArray == NULL)
-        ddsDumpArray = kjArray(NULL, "ddsDumpArray");
-
-      kjChildAdd(ddsDumpArray, dump);
+        KT_W("No notification callback function!");
     }
   }
 }

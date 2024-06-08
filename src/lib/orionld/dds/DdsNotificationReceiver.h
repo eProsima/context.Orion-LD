@@ -50,11 +50,19 @@
 #include "fastdds/dds/topic/TypeSupport.hpp"
 
 #include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
+#include "orionld/dds/NgsildEntity.h"                       // NgsildEntity
 #include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
 
 
 
 using namespace eprosima::fastdds::dds;
+
+
+// -----------------------------------------------------------------------------
+//
+// DdsNotificationFunction - callback for reception of DDS samples
+//
+typedef void (*DdsNotificationFunction)(KjNode* notificationP);
 
 
 
@@ -67,13 +75,17 @@ using namespace eprosima::fastdds::dds;
 class DdsNotificationReceiver : public DataReaderListener
 {
  public:
-  DdsNotificationReceiver() : samples_(0)    { }
-  ~DdsNotificationReceiver() override        { }
+  DdsNotificationReceiver() : samples_(0), callback_(NULL)    { }
+  explicit DdsNotificationReceiver(DdsNotificationFunction callback) : samples_(0), callback_(callback)    { }
+  ~DdsNotificationReceiver() override { }
 
-  void             on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override;
-  void             on_data_available(DataReader* reader) override;
-  NgsildEntity     ngsildEntity_;
-  std::atomic_int  samples_;
+  std::atomic_int          samples_;
+
+  void                     on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override;
+  void                     on_data_available(DataReader* reader) override;
+
+  NgsildEntity             ngsildEntity_;
+  DdsNotificationFunction  callback_;
 };
 
 #endif  // SRC_LIB_ORIONLD_DDS_DDSNOTIFICATIONRECEIVER_H_

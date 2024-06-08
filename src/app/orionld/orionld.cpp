@@ -81,6 +81,7 @@ extern "C"
 #include "kalloc/kaBufferReset.h"                           // kaBufferReset
 #include "kjson/kjBufferCreate.h"                           // kjBufferCreate
 #include "kjson/kjFree.h"                                   // kjFree
+#include "kjson/kjBuilder.h"                                // kjChildAdd
 #include "kjson/kjLookup.h"                                 // kjLookup
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
 }
@@ -134,6 +135,7 @@ extern "C"
 #include "orionld/troe/pgConnectionPoolsFree.h"               // pgConnectionPoolsFree
 #include "orionld/troe/pgConnectionPoolsPresent.h"            // pgConnectionPoolsPresent
 #include "orionld/distOp/distOpInit.h"                        // distOpInit
+#include "orionld/dds/ddsInit.h"                              // ddsInit
 
 #include "orionld/version.h"
 #include "orionld/orionRestServices.h"
@@ -248,6 +250,8 @@ bool            triggerOperation = false;
 bool            noprom           = false;
 bool            noArrayReduction = false;
 bool            ddsSupport       = false;
+char            ddsSubsTopics[512];
+char            ddsTopicType[512];
 
 
 
@@ -342,7 +346,9 @@ bool            ddsSupport       = false;
 #define CORE_CONTEXT_DESC      "core context version (v1.0|v1.3|v1.4|v1.5|v1.6|v1.7) - v1.6 is default"
 #define NO_PROM_DESC           "run without Prometheus metrics"
 #define NO_ARR_REDUCT_DESC     "skip JSON-LD Array Reduction"
-#define USE_DDS                "turn on DDS support"
+#define USE_DDS_DESC           "turn on DDS support"
+#define DDS_SUBS_TOPICS_DESC   "topics to subscribe to on DDS"
+#define DDS_TOPIC_TYPE_DESC    "DDS topic type"
 
 
 
@@ -448,7 +454,9 @@ PaArgument paArgs[] =
   { "-lmtmp",                 &lmtmp,                   "TMP_TRACES",                PaBool,    PaHid,  true,            false,  true,             TMPTRACES_DESC           },
   { "-noprom",                &noprom,                  "NO_PROM",                   PaBool,    PaHid,  false,           false,  true,             NO_PROM_DESC             },
   { "-noArrayReduction",      &noArrayReduction,        "NO_ARRAY_REDUCTION",        PaBool,    PaHid,  false,           false,  true,             NO_ARR_REDUCT_DESC       },
-  { "-dds",                   &ddsSupport,              "DDS",                       PaBool,    PaOpt,  false,           false,  true,             USE_DDS                  },
+  { "-dds",                   &ddsSupport,              "DDS",                       PaBool,    PaOpt,  false,           false,  true,             USE_DDS_DESC             },
+  { "-ddsSubsTopics",         ddsSubsTopics,            "DDS_SUBS_TOPICS",           PaString,  PaOpt,  _i "",           PaNL,   PaNL,             DDS_SUBS_TOPICS_DESC     },
+  { "-ddsTopicType",          ddsTopicType,             "DDS_TOPIC_TYPE",            PaString,  PaOpt,  _i "NGSI-LD",    PaNL,   PaNL,             DDS_TOPIC_TYPE_DESC      },
 
   PA_END_OF_ARGS
 };
@@ -497,7 +505,7 @@ void daemonize(void)
   if (pid > 0)
   {
     isFatherProcess = true;
-    exit(0);
+   exit(0);
   }
 
   // Change the file mode mask */
@@ -1071,6 +1079,8 @@ int main(int argC, char* argV[])
     exit(1);
   }
 
+  ktVerbose = KTRUE;
+
   coreContextUrl = coreContextUrlSetup(coreContextVersion);
   if (coreContextUrl == NULL)
     LM_X(1, ("Invalid version for the Core Context: %s (valid: v1.0|v1.3|v1.4|v1.5|v1.6|v1.7)", coreContextVersion));
@@ -1412,6 +1422,9 @@ int main(int argC, char* argV[])
   // Start the thread for periodic notifications
   if (pernot == true)
     pernotLoopStart();
+
+  if (ddsSupport == true)
+    ddsInit(ddsTopicType, ddsSubsTopics);
 
   if (socketService == true)
   {

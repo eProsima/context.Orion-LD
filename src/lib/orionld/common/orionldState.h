@@ -360,6 +360,7 @@ typedef struct OrionldConnectionState
   char*                   entityId;
   OrionldUriParamOptions  uriParamOptions;
   OrionldUriParams        uriParams;
+  bool                    upsert;
   char*                   errorAttributeArrayP;
   char                    errorAttributeArray[512];
   int                     errorAttributeArrayUsed;

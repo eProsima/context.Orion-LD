@@ -169,14 +169,12 @@ bool NgsildPublisher::publish(KjNode* entityP)
     ++attempts;
   }
 
-  KT_V("Publishing an entity");
   if (listener_.ready_ == false)
   {
     KT_W("listener still not ready after waiting for %d milliseconds", attempts);
     return false;
   }
 
-  KT_V("Publishing an entity");
   if (listener_.matched_ <= 0)
   {
     KT_W("listener not matched");
@@ -186,7 +184,6 @@ bool NgsildPublisher::publish(KjNode* entityP)
   if (entityP == NULL)
     KT_X(1, "entityP == NULL");
 
-  KT_V("Publishing an entity");
   KjNode* tenantNodeP     = kjLookup(entityP, "tenant");
   KjNode* idNodeP         = kjLookup(entityP, "id");
   KjNode* typeNodeP       = kjLookup(entityP, "type");
@@ -194,7 +191,6 @@ bool NgsildPublisher::publish(KjNode* entityP)
   KjNode* createdAtNodeP  = kjLookup(entityP, "createdAt");
   KjNode* modifiedAtNodeP = kjLookup(entityP, "modifiedAt");
 
-  KT_V("Publishing an entity");
   const char*      tenant      = (tenantNodeP     != NULL)? tenantNodeP->value.s     : NULL;
   const char*      id          = (idNodeP         != NULL)? idNodeP->value.s         : NULL;
   const char*      type        = (typeNodeP       != NULL)? typeNodeP->value.s       : NULL;
@@ -202,7 +198,6 @@ bool NgsildPublisher::publish(KjNode* entityP)
   const long long  createdAt   = (createdAtNodeP  != NULL)? createdAtNodeP->value.i  : 0;
   const long long  modifiedAt  = (modifiedAtNodeP != NULL)? modifiedAtNodeP->value.i : 0;
 
-  KT_V("Publishing an entity");
   if (tenantNodeP     != NULL) kjChildRemove(entityP, tenantNodeP);
   if (idNodeP         != NULL) kjChildRemove(entityP, idNodeP);
   if (typeNodeP       != NULL) kjChildRemove(entityP, typeNodeP);
@@ -211,7 +206,6 @@ bool NgsildPublisher::publish(KjNode* entityP)
   if (modifiedAtNodeP != NULL) kjChildRemove(entityP, modifiedAtNodeP);
 
   // Only attributes left now
-  KT_V("Publishing an entity");
   char* serialized = NULL;
   if (entityP->value.firstChildP != NULL)
   {
@@ -219,11 +213,8 @@ bool NgsildPublisher::publish(KjNode* entityP)
 
     int size = kjFastRenderSize(entityP);
 
-    KT_V("Publishing an entity");
     serialized = (char*) malloc(size * 2 + 256);  // free? :)
-    KT_V("Publishing an entity");
     kjFastRender(entityP, serialized);
-    KT_V("Publishing an entity");
   }
 
   KT_V("tenant:     '%s'", tenant);
