@@ -37,6 +37,14 @@ extern "C"
 
 // -----------------------------------------------------------------------------
 //
+// ddsOpMode -
+//
+DdsOperationMode ddsOpMode;
+
+
+
+// -----------------------------------------------------------------------------
+//
 // ddsInit - initialization function for DDS
 //
 // PARAMETERS
@@ -44,8 +52,10 @@ extern "C"
 // * ddsSubsTopics
 // * mode - the DDS mode the broker is working in
 //
-int ddsInit(const char* ddsTopicType, char* ddsSubsTopics)
+int ddsInit(const char* ddsTopicType, char* ddsSubsTopics, DdsOperationMode _ddsOpMode)
 {
+  ddsOpMode = _ddsOpMode;
+
   if (ddsSubsTopics[0] == 0)
     return 0;
 

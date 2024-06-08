@@ -1424,7 +1424,7 @@ int main(int argC, char* argV[])
     pernotLoopStart();
 
   if (ddsSupport == true)
-    ddsInit(ddsTopicType, ddsSubsTopics);
+    ddsInit(ddsTopicType, ddsSubsTopics, DDSOpModeDefault);
 
   if (socketService == true)
   {

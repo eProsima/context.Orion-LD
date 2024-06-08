@@ -30,8 +30,18 @@
 
 // -----------------------------------------------------------------------------
 //
+// DdsOperationMode -
+//
+typedef enum DdsOperationMode
+{
+  DDSOpModeDefault
+} DdsOperationMode;
+
+
+// -----------------------------------------------------------------------------
+//
 // ddsInit -
 //
-extern int ddsInit(const char* ddsTopicType, char* ddsSubsTopics);
+extern int ddsInit(const char* ddsTopicType, char* ddsSubsTopics, DdsOperationMode ddsOpMode);
 
 #endif  // SRC_LIB_ORIONLD_DDS_DDSINIT_H_
