@@ -31,6 +31,7 @@ extern "C"
 }
 
 #include "orionld/dds/NgsildSubscriber.h"
+#include "orionld/dds/DdsNotificationReceiver.h"            // DdsNotificationFunction
 
 
 
@@ -40,8 +41,9 @@ extern "C"
 //
 typedef struct SubscriberParams
 {
-  char* topicType;
-  char* topicName;
+  char*                    topicType;
+  char*                    topicName;
+  DdsNotificationFunction  callback;
 } SubscriberParams;
 
 
@@ -57,9 +59,10 @@ static void* ddsSubscribe2(void* vP)
 {
   SubscriberParams* spP = (SubscriberParams*) vP;
 
+  ktVerbose = KTRUE;
   KT_V("Creating a subscription on '%s/%s'", spP->topicType, spP->topicName);
 
-  NgsildSubscriber* subP = new NgsildSubscriber(spP->topicType);
+  NgsildSubscriber* subP = new NgsildSubscriber(spP->topicType, spP->callback);
 
   if (subP->init(spP->topicName))
   {
@@ -78,13 +81,14 @@ static void* ddsSubscribe2(void* vP)
 //
 // ddsSubscribe -
 //
-void ddsSubscribe(const char* topicType, const char* topicName)
+void ddsSubscribe(const char* topicType, const char* topicName, DdsNotificationFunction callback)
 {
   pthread_t          tid;
   SubscriberParams*  spP = (SubscriberParams*) malloc(sizeof(SubscriberParams));
 
   spP->topicType = strdup(topicType);
   spP->topicName = strdup(topicName);
+  spP->callback  = callback;
 
   KT_V("Starting thread for DDS subscription on %s/%s", spP->topicType, spP->topicName);
   pthread_create(&tid, NULL, ddsSubscribe2, spP);

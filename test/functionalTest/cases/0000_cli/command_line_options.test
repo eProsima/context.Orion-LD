@@ -104,5 +104,7 @@ Usage: orionld  [option '-U' (extended usage)]
                 [option '-distributed' (turn on distributed operation)]
                 [option '-brokerId' <identity of this broker instance for registrations - for the Via header>]
                 [option '-dds' (turn on DDS support)]
+                [option '-ddsSubsTopics' <topics to subscribe to on DDS>]
+                [option '-ddsTopicType' <DDS topic type>]
 
 --TEARDOWN--

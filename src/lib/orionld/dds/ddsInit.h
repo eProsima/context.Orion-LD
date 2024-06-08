@@ -1,5 +1,5 @@
-#ifndef SRC_LIB_ORIONLD_DDS_DDSSUBSCRIBE_H_
-#define SRC_LIB_ORIONLD_DDS_DDSSUBSCRIBE_H_
+#ifndef SRC_LIB_ORIONLD_DDS_DDSINIT_H_
+#define SRC_LIB_ORIONLD_DDS_DDSINIT_H_
 
 /*
 *
@@ -23,16 +23,25 @@
 * For those usages not covered by this license please contact with
 * orionld at fiware dot org
 *
-* Author: David Campo, Ken Zangelin
+* Author: Ken Zangelin
 */
-#include "orionld/dds/DdsNotificationReceiver.h"                   // DdsNotificationFunction
 
 
 
 // -----------------------------------------------------------------------------
 //
-// ddsSubscribe -
+// DdsOperationMode -
 //
-extern void ddsSubscribe(const char* topicType, const char* topicName, DdsNotificationFunction callback);
+typedef enum DdsOperationMode
+{
+  DDSOpModeDefault
+} DdsOperationMode;
 
-#endif  // SRC_LIB_ORIONLD_DDS_DDSSUBSCRIBE_H_
+
+// -----------------------------------------------------------------------------
+//
+// ddsInit -
+//
+extern int ddsInit(const char* ddsTopicType, char* ddsSubsTopics, DdsOperationMode ddsOpMode);
+
+#endif  // SRC_LIB_ORIONLD_DDS_DDSINIT_H_

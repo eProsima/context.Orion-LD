@@ -87,12 +87,13 @@ class NgsildSubscriber
   DdsNotificationReceiver  listener_;
 
  public:
-  explicit NgsildSubscriber(const char* topicType)
+  explicit NgsildSubscriber(const char* topicType, DdsNotificationFunction callback)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , reader_(nullptr)
     , topic_(nullptr)
     , type_(new NgsildEntityPubSubType(topicType))
+    , listener_(callback)
   {
   }
 
