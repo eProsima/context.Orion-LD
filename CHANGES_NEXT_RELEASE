@@ -9,3 +9,4 @@
   * Support for attributes of type JsonProperty
   * Support for the new URL parameter "format" for output formats (normalized, concise, simplified)
   * Fixed a possible crash for TRoE and attributes of type Vocab/Json/Language
+  * Improved treatment of malfunctioning notification receivers, on timeout (clients don't respond to the notification)
