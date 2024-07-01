@@ -446,6 +446,7 @@ typedef struct OrionldConnectionState
   int                     distOpNo;
   DistOp*                 distOpList;
   uint32_t                acceptMask;            // "1 << MimeType" mask for all accepted Mime Types, regardless of which is chosen and of weight
+  bool                    ddsSample;             // Are we treating a sample from DDS?
 
   //
   // TRoE
@@ -617,6 +618,7 @@ extern bool              entityMapsEnabled;        // Enable Entity Maps
 extern bool              distSubsEnabled;          // Enable distributed subscriptions
 extern bool              noArrayReduction;         // Used by arrayReduce in pCheckAttribute.cpp
 extern bool              ddsSupport;               // Publish/Subscriba via DDS
+extern char              ddsTopicType[512];
 
 extern char                localIpAndPort[135];    // Local address for X-Forwarded-For (from orionld.cpp)
 extern unsigned long long  inReqPayloadMaxSize;

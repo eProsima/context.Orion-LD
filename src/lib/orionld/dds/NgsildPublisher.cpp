@@ -49,6 +49,7 @@ extern "C"
 }
 
 #include "orionld/common/traceLevels.h"                     // Trace Levels
+#include "orionld/common/orionldState.h"                    // orionldState
 #include "orionld/dds/NgsildPublisher.h"                    // NgsildPublisher
 #include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
 #include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
@@ -156,9 +157,9 @@ bool NgsildPublisher::init(const char* topicName)
 //   The input "entityP" is a 100% NGSI-LD Entity.
 //   This function takes care of moving all attributes into the field "attributes", the way we need it for DDS
 //
-bool NgsildPublisher::publish(KjNode* entityP)
+bool NgsildPublisher::publish(const char* entityType, const char* entityId, KjNode* attributeP)
 {
-  KT_V("Publishing an entity");
+  KT_V("Publishing an attribute (%s)", attributeP->name);
 
   int attempts    = 1;
   int maxAttempts = 1000;  // FIXME: sleeping here for one whole second it just not good enough!!!
@@ -181,57 +182,44 @@ bool NgsildPublisher::publish(KjNode* entityP)
     return false;
   }
 
-  if (entityP == NULL)
-    KT_X(1, "entityP == NULL");
+  if (attributeP == NULL)
+    KT_X(1, "attributeP == NULL");
 
-  KjNode* tenantNodeP     = kjLookup(entityP, "tenant");
-  KjNode* idNodeP         = kjLookup(entityP, "id");
-  KjNode* typeNodeP       = kjLookup(entityP, "type");
-  KjNode* scopeNodeP      = kjLookup(entityP, "scope");
-  KjNode* createdAtNodeP  = kjLookup(entityP, "createdAt");
-  KjNode* modifiedAtNodeP = kjLookup(entityP, "modifiedAt");
+
+  kjTreeLog2(attributeP, "attribute", StDdsPublish);
+  KjNode* tenantNodeP     = kjLookup(attributeP, "tenant");
+  KjNode* scopeNodeP      = kjLookup(attributeP, "scope");
+  KjNode* createdAtNodeP  = kjLookup(attributeP, "createdAt");
+  KjNode* modifiedAtNodeP = kjLookup(attributeP, "modifiedAt");
 
   const char*      tenant      = (tenantNodeP     != NULL)? tenantNodeP->value.s     : NULL;
-  const char*      id          = (idNodeP         != NULL)? idNodeP->value.s         : NULL;
-  const char*      type        = (typeNodeP       != NULL)? typeNodeP->value.s       : NULL;
   const char*      scope       = (scopeNodeP      != NULL)? scopeNodeP->value.s      : NULL;
   const long long  createdAt   = (createdAtNodeP  != NULL)? createdAtNodeP->value.i  : 0;
   const long long  modifiedAt  = (modifiedAtNodeP != NULL)? modifiedAtNodeP->value.i : 0;
 
-  if (tenantNodeP     != NULL) kjChildRemove(entityP, tenantNodeP);
-  if (idNodeP         != NULL) kjChildRemove(entityP, idNodeP);
-  if (typeNodeP       != NULL) kjChildRemove(entityP, typeNodeP);
-  if (scopeNodeP      != NULL) kjChildRemove(entityP, scopeNodeP);
-  if (createdAtNodeP  != NULL) kjChildRemove(entityP, createdAtNodeP);
-  if (modifiedAtNodeP != NULL) kjChildRemove(entityP, modifiedAtNodeP);
+  //
+  // I hijack "attributes" here for the value of the attribute (what's inside the tree attributeP)
+  //
+  int    size        = kjFastRenderSize(attributeP);
+  char*  attributes  = kaAlloc(&orionldState.kalloc, size * 2);
 
-  // Only attributes left now
-  char* serialized = NULL;
-  if (entityP->value.firstChildP != NULL)
-  {
-    kjTreeLog2(entityP, "Entity to publish", StDds);
-
-    int size = kjFastRenderSize(entityP);
-
-    serialized = (char*) malloc(size * 2 + 256);  // free? :)
-    kjFastRender(entityP, serialized);
-  }
+  kjFastRender(attributeP, attributes);
 
   KT_V("tenant:     '%s'", tenant);
-  KT_V("id:         '%s'", id);
-  KT_V("type:       '%s'", type);
+  KT_V("entityId:   '%s'", entityId);
+  KT_V("entityType: '%s'", entityType);
   KT_V("scope:      '%s'", scope);
   KT_V("createdAt:  %lld", createdAt);
   KT_V("modifiedAt: %lld", modifiedAt);
-  KT_V("attributes: '%s'", serialized);
+  KT_V("attribute value: '%s'", attributes);
 
   if (tenant     != NULL) entity_.tenant(tenant);
-  if (id         != NULL) entity_.id(id);
-  if (type       != NULL) entity_.type(type);
+  if (entityId   != NULL) entity_.id(entityId);
+  if (entityType != NULL) entity_.type(entityType);
   if (scope      != NULL) entity_.scope(scope);
   if (createdAt  != 0)    entity_.createdAt(createdAt);
   if (modifiedAt != 0)    entity_.modifiedAt(modifiedAt);
-  if (serialized != NULL) entity_.attributes(serialized);
+  if (attributes != NULL) entity_.attributes(attributes);
 
   bool b = writer_->write(&entity_);
 

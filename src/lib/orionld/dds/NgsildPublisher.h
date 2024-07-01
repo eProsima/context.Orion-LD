@@ -93,7 +93,7 @@ class NgsildPublisher  // : DataWriterListener
 
   virtual ~NgsildPublisher();
   bool     init(const char* topicName);
-  bool     publish(KjNode* entityP);
+  bool     publish(const char* entityType, const char* entityId, KjNode* attributeP);
 };
 
 #endif  // SRC_LIB_ORIONLD_DDS_NGSILDPUBLISHER_H_

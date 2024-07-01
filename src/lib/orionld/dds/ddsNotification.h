@@ -35,6 +35,6 @@ extern "C"
 //
 // ddsNotification -
 //
-extern void ddsNotification(KjNode* notificationP);
+extern void ddsNotification(const char* entityType, const char* entityId, const char* attrName, KjNode* notificationP);
 
 #endif  // SRC_LIB_ORIONLD_DDS_DDSNOTIFICATION_H_

@@ -34,8 +34,28 @@ extern "C"
 
 // -----------------------------------------------------------------------------
 //
-// ddsPublish -
+// ddsPublishAttribute -
 //
-extern void ddsPublish(const char* topicType, const char* topicName, KjNode* entityP);
+extern void ddsPublishAttribute
+(
+  const char* topicType,
+  const char* entityType,
+  const char* entityId,
+  KjNode*     attributeP
+);
+
+
+
+// -----------------------------------------------------------------------------
+//
+// ddsPublishEntity -
+//
+extern void ddsPublishEntity
+(
+  const char* topicType,
+  const char* entityType,
+  const char* entityId,
+  KjNode*     entityP
+);
 
 #endif  // SRC_LIB_ORIONLD_DDS_DDSPUBLISH_H_

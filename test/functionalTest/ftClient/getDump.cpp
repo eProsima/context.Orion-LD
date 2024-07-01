@@ -34,6 +34,7 @@ extern "C"
 #include "kjson/kjRender.h"                                 // kjRender
 #include "kjson/kjRenderSize.h"                             // kjRenderSize
 #include "kjson/kjLookup.h"                                 // kjLookup
+#include "kjson/kjBuilder.h"                                // kjArray
 }
 
 #include "common/orionldState.h"                            // orionldState
@@ -95,8 +96,13 @@ KjNode* getDump(int* statusCodeP)
   // Nothing to dump?
   // - Return the empty array
   //
+  if (dumpArray == NULL)
+    dumpArray = kjArray(NULL, NULL);
+
+  KT_V("dumpArray at %p", dumpArray);
   if (dumpArray->value.firstChildP == NULL)
     return dumpArray;
+  KT_V("dumpArray at %p", dumpArray);
 
   int     bufSize      = kjRenderSize(orionldState.kjsonP, dumpArray);
   char*   buf          = kaAlloc(&orionldState.kalloc, bufSize);

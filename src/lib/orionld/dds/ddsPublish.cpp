@@ -45,10 +45,20 @@ using namespace eprosima::fastdds::dds;
 
 // -----------------------------------------------------------------------------
 //
-// ddsPublish -
+// ddsPublishAttribute -
 //
-void ddsPublish(const char* topicType, const char* topicName, KjNode* entityP)
+// entityType is optional (NULL)
+// entityId   is mandatory
+//
+void ddsPublishAttribute
+(
+  const char* topicType,
+  const char* entityType,
+  const char* entityId,
+  KjNode*     attributeP
+)
 {
+  char*            topicName  = attributeP->name;
   NgsildPublisher* publisherP = new NgsildPublisher(topicType);
 
   KT_V("Initializing publisher for topicType '%s', topicName '%s'", topicType, topicName);
@@ -64,7 +74,7 @@ void ddsPublish(const char* topicType, const char* topicName, KjNode* entityP)
 #endif
 
     KT_V("Publishing on topicType '%s', topicName '%s'", topicType, topicName);
-    if (publisherP->publish(entityP))
+    if (publisherP->publish(entityType, entityId, attributeP))
       KT_V("Published on topicType '%s', topicName '%s'", topicType, topicName);
     else
       KT_V("Error publishing on topicType '%s', topicName '%s'", topicType, topicName);
@@ -73,7 +83,35 @@ void ddsPublish(const char* topicType, const char* topicName, KjNode* entityP)
     usleep(5000);
 #endif
   }
+  else
+    KT_E("NgsildPublisher::init failed (get error string from DDS)");
 
   KT_V("Deleting publisher");
   delete publisherP;
+}
+
+
+
+// -----------------------------------------------------------------------------
+//
+// ddsPublishEntity -
+//
+void ddsPublishEntity
+(
+  const char* topicType,
+  const char* entityType,
+  const char* entityId,
+  KjNode*     entityP
+)
+{
+  KT_V("Publishing the attributes of the entity '%s' in DDS", entityId);
+  for (KjNode* attributeP = entityP->value.firstChildP; attributeP != NULL; attributeP = attributeP->next)
+  {
+    if (strcmp(attributeP->name, "id") == 0)
+      continue;
+    if (strcmp(attributeP->name, "type") == 0)
+      continue;
+
+    ddsPublishAttribute(topicType, entityType, entityId, attributeP);
+  }
 }
