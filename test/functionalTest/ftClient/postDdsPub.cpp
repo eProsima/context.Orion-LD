@@ -30,7 +30,7 @@ extern "C"
 }
 
 #include "common/orionldState.h"                            // orionldState
-#include "dds/ddsPublish.h"                                 // ddsPublish
+#include "dds/ddsPublish.h"                                 // ddsPublishEntity
 
 #include "ftClient/ftErrorResponse.h"                       // ftErrorResponse
 
@@ -47,16 +47,21 @@ KjNode* postDdsPub(int* statusCodeP)
   const char*  ddsTopicType       = (ddsTopicTypeNodeP != NULL)? ddsTopicTypeNodeP->value.s : NULL;
   KjNode*      ddsTopicNameNodeP  = (uriParams         != NULL)? kjLookup(uriParams, "ddsTopicName") : NULL;
   const char*  ddsTopicName       = (ddsTopicNameNodeP != NULL)? ddsTopicNameNodeP->value.s : NULL;
+  KjNode*      entityTypeNodeP    = (uriParams         != NULL)? kjLookup(uriParams, "entityType") : NULL;
+  const char*  entityType         = (entityTypeNodeP   != NULL)? entityTypeNodeP->value.s : NULL;
+  KjNode*      entityIdNodeP      = (uriParams         != NULL)? kjLookup(uriParams, "entityId") : NULL;
+  const char*  entityId           = (entityIdNodeP     != NULL)? entityIdNodeP->value.s : NULL;
 
-  if (ddsTopicName == NULL || ddsTopicType == NULL)
+  if (ddsTopicType == NULL)
   {
-    KT_E("Both Name and Type of the topic should not be null");
+    KT_E("Topic Type missing (URL param ?ddsTopicType=xxx)");
     *statusCodeP = 400;
-    return ftErrorResponse(400, "URI Param missing", "Both Name and Type of the topic must be present");
+    return ftErrorResponse(400, "URI Param missing", "ddsTopicType");
   }
 
   KT_V("Publishing on DDS for the topic %s:%s", ddsTopicType, ddsTopicName);
-  ddsPublish(ddsTopicType, ddsTopicName, orionldState.requestTree);
+  // orionldState.requestTree->name = (char*) ddsTopicName;
+  ddsPublishEntity(ddsTopicType, entityType, entityId, orionldState.requestTree);
 
   *statusCodeP = 204;
   return NULL;

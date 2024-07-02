@@ -24,13 +24,18 @@
 */
 extern "C"
 {
+#include "kbase/kStringSplit.h"                             // kStringSplit
 #include "ktrace/kTrace.h"                                  // trace messages - ktrace library
 #include "kjson/KjNode.h"                                   // KjNode
 #include "kjson/kjLookup.h"                                 // kjLookup
 #include "kjson/kjBuilder.h"                                // kjArray, ...
+#include "kjson/kjClone.h"                                  // kjClone
 }
 
+#include "common/orionldState.h"                            // orionldState
+#include "common/traceLevels.h"                             // Trace levels for ktrace
 #include "dds/ddsSubscribe.h"                               // ddsSubscribe
+#include "dds/kjTreeLog.h"                                  // kjTreeLog2
 
 #include "ftClient/ftErrorResponse.h"                       // ftErrorResponse
 
@@ -48,12 +53,43 @@ extern KjNode* ddsDumpArray;
 //
 // ddsNotification - callback for notifications over DDS
 //
-void ddsNotification(KjNode* notificationP)
+// attrValue: {"attributeValue":{"type":"Property","value":2}}
+//
+void ddsNotification(const char* entityType, const char* entityId, const char* attrName, KjNode* attrValue)
 {
+  KT_T(StDdsDump, "Got a DDS notification");
+
   if (ddsDumpArray == NULL)
+  {
+    KT_T(StDdsDump, "Creating the DDS DumpArray");
     ddsDumpArray = kjArray(NULL, "ddsDumpArray");
+  }
+
+  KjNode* entityTypeNode = kjString(NULL, "entityType", entityType);
+  KjNode* entityIdNode   = kjString(NULL, "entityId",   entityId);
+  KjNode* notificationP  = kjObject(NULL, NULL);
+
+  //
+  // The value of the attribute (right now) comes as { "attributeValue": xxx }
+  // Assuming DDS knows only about Property, we change the name "attributeValue" to "value"
+  //
+  if ((attrValue->type == KjObject) && (attrValue->value.firstChildP != NULL))
+  {
+    kjTreeLog2(attrValue, attrName, StDdsDump);
+    attrValue = attrValue->value.firstChildP;
+  }
+
+  attrValue->name = (char*) attrName;
+
+  kjChildAdd(notificationP, entityTypeNode);
+  kjChildAdd(notificationP, entityIdNode);
+  kjChildAdd(notificationP, kjClone(NULL, attrValue));
+
+  kjTreeLog2(ddsDumpArray, "DDS dump array before", StDdsDump);
+  kjTreeLog2(notificationP, "Adding to DDS dump array", StDdsDump);
 
   kjChildAdd(ddsDumpArray, notificationP);
+  kjTreeLog2(ddsDumpArray, "DDS dump array after", StDdsDump);
 }
 
 
@@ -68,7 +104,7 @@ KjNode* postDdsSub(int* statusCodeP)
   KjNode*      ddsTopicTypeNodeP  = (uriParams         != NULL)? kjLookup(uriParams, "ddsTopicType") : NULL;
   const char*  ddsTopicType       = (ddsTopicTypeNodeP != NULL)? ddsTopicTypeNodeP->value.s : NULL;
   KjNode*      ddsTopicNameNodeP  = (uriParams         != NULL)? kjLookup(uriParams, "ddsTopicName") : NULL;
-  const char*  ddsTopicName       = (ddsTopicNameNodeP != NULL)? ddsTopicNameNodeP->value.s : NULL;
+  char*        ddsTopicName       = (ddsTopicNameNodeP != NULL)? ddsTopicNameNodeP->value.s : NULL;
 
   if (ddsTopicName == NULL || ddsTopicType == NULL)
   {
@@ -78,7 +114,12 @@ KjNode* postDdsSub(int* statusCodeP)
   }
 
   KT_V("Creating DDS Subcription for the topic %s:%s", ddsTopicType, ddsTopicName);
-  ddsSubscribe(ddsTopicType, ddsTopicName, ddsNotification);
+
+  char* attrV[100];
+  int   attrs = kStringSplit(ddsTopicName, ',', attrV, 100);
+
+  for (int ix = 0; ix < attrs; ix++)
+    ddsSubscribe(ddsTopicType, attrV[ix], ddsNotification);
 
   *statusCodeP = 201;
   return NULL;

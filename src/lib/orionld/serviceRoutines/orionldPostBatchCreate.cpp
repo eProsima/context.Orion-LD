@@ -48,7 +48,7 @@ extern "C"
 #include "orionld/mongoc/mongocEntitiesQuery.h"                // mongocEntitiesQuery
 #include "orionld/mongoc/mongocEntitiesUpsert.h"               // mongocEntitiesUpsert
 #include "orionld/notifications/alteration.h"                  // alteration
-#include "orionld/dds/ddsPublish.h"                            // ddsPublish
+#include "orionld/dds/ddsPublish.h"                            // ddsPublishEntity
 #include "orionld/common/eqForDot.h"                           // eqForDot
 #include "orionld/serviceRoutines/orionldPostBatchCreate.h"    // Own interface
 
@@ -190,9 +190,9 @@ bool orionldPostBatchCreate(void)
 
       if (ddsSupport)
       {
-        KT_V(("Publishing an entity on DDS"));
+        KT_V("Publishing entity '%s', type '%s' on DDS", entityId, entityType);
         dbModelToApiAttributeNames(finalApiEntityP);
-        ddsPublish("NGSI-LD", "NGSI-LD", finalApiEntityP);
+        ddsPublishEntity(ddsTopicType, entityType, entityId, finalApiEntityP);
       }
     }
 

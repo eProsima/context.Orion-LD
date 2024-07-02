@@ -31,19 +31,19 @@ ftClientStart -v -t 0-5000
 --SHELL--
 
 #
-# 01. Ask FT1 to create a DDS subscription on topic 'NGSI-LD'
+# 01. Ask FT1 to create a DDS subscription on topics p1,p2,p3
 # 02. Create three entity with batch create in Orion-LD, which then publishes it on DDS, for FT1 to receive
 # 03. Ask FT1 what it has received
 # 04. Reset the DDS notification accumulation
 #
 
-echo "01. Ask FT1 to create a DDS subscription on topic 'NGSI-LD'"
+echo "01. Ask FT1 to create a DDS subscription on topics p1,p2,p3"
 echo "==========================================================="
 payload='{
   "id": "urn:s1",
   "type": "Subscription"
 }'
-orionCurl --url '/dds/sub?ddsTopicType=NGSI-LD&ddsTopicName=NGSI-LD' --port $FT_PORT --payload "$payload"
+orionCurl --url '/dds/sub?ddsTopicType=NGSI-LD&ddsTopicName=https://uri.etsi.org/ngsi-ld/default-context/p1,https://uri.etsi.org/ngsi-ld/default-context/p2,https://uri.etsi.org/ngsi-ld/default-context/p3' --port $FT_PORT --payload "$payload"
 echo
 echo
 
@@ -93,7 +93,7 @@ echo
 
 
 --REGEXPECT--
-01. Ask FT1 to create a DDS subscription on topic 'NGSI-LD'
+01. Ask FT1 to create a DDS subscription on topics p1,p2,p3
 ===========================================================
 HTTP/1.1 201 Created
 Content-Length: 0
@@ -118,53 +118,77 @@ Date: REGEX(.*)
 03. Ask FT1 what it has received
 ================================
 HTTP/1.1 200 OK
-Content-Length: 1236
+Content-Length: 1884
 Date: REGEX(.*)
 
 [
   {
-    "id": "urn:e1",
-    "type": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e1",
     "https://uri.etsi.org/ngsi-ld/default-context/p1": {
       "type": "Property",
       "value": 1
-    },
+    }
+  },
+  {
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e1",
     "https://uri.etsi.org/ngsi-ld/default-context/p2": {
       "type": "Property",
       "value": 1
-    },
+    }
+  },
+  {
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e1",
     "https://uri.etsi.org/ngsi-ld/default-context/p3": {
       "type": "Property",
       "value": 1
     }
   },
   {
-    "id": "urn:e2",
-    "type": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e2",
     "https://uri.etsi.org/ngsi-ld/default-context/p1": {
       "type": "Property",
       "value": 1
-    },
+    }
+  },
+  {
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e2",
     "https://uri.etsi.org/ngsi-ld/default-context/p2": {
       "type": "Property",
       "value": 1
-    },
+    }
+  },
+  {
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e2",
     "https://uri.etsi.org/ngsi-ld/default-context/p3": {
       "type": "Property",
       "value": 1
     }
   },
   {
-    "id": "urn:e3",
-    "type": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e3",
     "https://uri.etsi.org/ngsi-ld/default-context/p1": {
       "type": "Property",
       "value": 1
-    },
+    }
+  },
+  {
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e3",
     "https://uri.etsi.org/ngsi-ld/default-context/p2": {
       "type": "Property",
       "value": 1
-    },
+    }
+  },
+  {
+    "entityType": "https://uri.etsi.org/ngsi-ld/default-context/x",
+    "entityId": "urn:e3",
     "https://uri.etsi.org/ngsi-ld/default-context/p3": {
       "type": "Property",
       "value": 1

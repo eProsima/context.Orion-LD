@@ -31,56 +31,40 @@ ftClientStart -v -t 0-5000 --port $FT2_PORT --logDir $FT2_LOG_DIR
 --SHELL--
 
 #
-# 01. Ask FT1 to create a DDS subscription on topic 'x'
-# 02. Ask FT2 to publish an entity on topic 'x'
-# 03. Ask FT2 to publish one more entity on topic 'x'
+# 01. Ask FT1 to create a DDS subscription on topic 'p1'
+# 02. Ask FT2 to publish an entity on topic 'p1'
+# 03. Ask FT2 to publish one more entity on topic 'p1'
 # 04. Ask FT1 what it has received
 # 05. Reset the DDS notification accumulation
 #
 
-echo "01. Ask FT1 to create a DDS subscription on topic 'x'"
-echo "====================================================="
+echo "01. Ask FT1 to create a DDS subscription on topic 'p1'"
+echo "======================================================"
 payload='{
   "id": "urn:s1",
   "type": "Subscription"
 }'
-orionCurl --url '/dds/sub?ddsTopicType=someTopic&ddsTopicName=x' --port $FT_PORT --payload "$payload"
+orionCurl --url '/dds/sub?ddsTopicType=someTopic&ddsTopicName=https://uri.etsi.org/ngsi-ld/default-context/p1' --port $FT_PORT --payload "$payload"
 echo
 echo
 
 
-echo "02. Ask FT2 to publish an entity on topic 'x'"
-echo "============================================="
+echo "02. Ask FT2 to publish an entity on topic 'p1'"
+echo "=============================================="
 payload='{
-  "tenant": "t1",
-  "id": "urn:e1",
-  "type": "x",
-  "scope": "/a/b/c",
-  "createdAt": 10,
-  "modifiedAt": 10,
-  "p1": 1,
-  "p2": 1,
-  "p3": 1
+  "https://uri.etsi.org/ngsi-ld/default-context/p1": 10
 }'
-orionCurl --url '/dds/pub?ddsTopicType=someTopic&ddsTopicName=x' --port $FT2_PORT --payload "$payload"
+orionCurl --url '/dds/pub?ddsTopicType=someTopic&ddsTopicName=https://uri.etsi.org/ngsi-ld/default-context/p1&entityId=urn:e1&entityType=x' --port $FT2_PORT --payload "$payload"
 echo
 echo
 
 
-echo "03. Ask FT2 to publish one more entity on topic 'x'"
-echo "==================================================="
+echo "03. Ask FT2 to publish one more entity on topic 'p1'"
+echo "===================================================="
 payload='{
-  "tenant": "t1",
-  "id": "urn:e2",
-  "type": "x",
-  "scope": "/a/b/c",
-  "createdAt": 10,
-  "modifiedAt": 10,
-  "p1": 2,
-  "p2": 2,
-  "p3": 2
+  "https://uri.etsi.org/ngsi-ld/default-context/p1": 12
 }'
-orionCurl --url '/dds/pub?ddsTopicType=someTopic&ddsTopicName=x' --port $FT2_PORT --payload "$payload"
+orionCurl --url '/dds/pub?ddsTopicType=someTopic&ddsTopicName=https://uri.etsi.org/ngsi-ld/default-context/p1&entityId=urn:e2&entityType=x' --port $FT2_PORT --payload "$payload"
 echo
 echo
 
@@ -100,23 +84,23 @@ echo
 
 
 --REGEXPECT--
-01. Ask FT1 to create a DDS subscription on topic 'x'
-=====================================================
+01. Ask FT1 to create a DDS subscription on topic 'p1'
+======================================================
 HTTP/1.1 201 Created
 Content-Length: 0
 Date: REGEX(.*)
 
 
 
-02. Ask FT2 to publish an entity on topic 'x'
-=============================================
+02. Ask FT2 to publish an entity on topic 'p1'
+==============================================
 HTTP/1.1 204 No Content
 Date: REGEX(.*)
 
 
 
-03. Ask FT2 to publish one more entity on topic 'x'
-===================================================
+03. Ask FT2 to publish one more entity on topic 'p1'
+====================================================
 HTTP/1.1 204 No Content
 Date: REGEX(.*)
 
@@ -125,31 +109,19 @@ Date: REGEX(.*)
 04. Ask FT1 what it has received
 ================================
 HTTP/1.1 200 OK
-Content-Length: 343
+Content-Length: 235
 Date: REGEX(.*)
 
 [
   {
-    "tenant": "t1",
-    "id": "urn:e1",
-    "type": "x",
-    "scope": "/a/b/c",
-    "createdAt": 10,
-    "modifiedAt": 10,
-    "p1": 1,
-    "p2": 1,
-    "p3": 1
+    "entityType": "x",
+    "entityId": "urn:e1",
+    "https://uri.etsi.org/ngsi-ld/default-context/p1": 10
   },
   {
-    "tenant": "t1",
-    "id": "urn:e2",
-    "type": "x",
-    "scope": "/a/b/c",
-    "createdAt": 10,
-    "modifiedAt": 10,
-    "p1": 2,
-    "p2": 2,
-    "p3": 2
+    "entityType": "x",
+    "entityId": "urn:e2",
+    "https://uri.etsi.org/ngsi-ld/default-context/p1": 12
   }
 ]
 

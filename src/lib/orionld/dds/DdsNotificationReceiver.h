@@ -40,6 +40,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+#include <string>
+
 #include "fastdds/dds/domain/DomainParticipant.hpp"
 #include "fastdds/dds/domain/DomainParticipantFactory.hpp"
 #include "fastdds/dds/subscriber/DataReader.hpp"
@@ -58,11 +60,12 @@
 using namespace eprosima::fastdds::dds;
 
 
+
 // -----------------------------------------------------------------------------
 //
 // DdsNotificationFunction - callback for reception of DDS samples
 //
-typedef void (*DdsNotificationFunction)(KjNode* notificationP);
+typedef void (*DdsNotificationFunction)(const char* entityType, const char* entityId, const char* topicName, KjNode* notificationP);
 
 
 
@@ -80,6 +83,7 @@ class DdsNotificationReceiver : public DataReaderListener
   ~DdsNotificationReceiver() override { }
 
   std::atomic_int          samples_;
+  std::string              topicName_;
 
   void                     on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override;
   void                     on_data_available(DataReader* reader) override;

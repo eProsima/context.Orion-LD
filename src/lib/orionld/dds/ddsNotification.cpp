@@ -33,7 +33,7 @@ extern "C"
 #include "orionld/common/orionldState.h"                    // orionldState, kjTreeLog
 #include "orionld/common/traceLevels.h"                     // KT_T trace levels
 #include "orionld/common/tenantList.h"                      // tenant0
-#include "orionld/serviceRoutines/orionldPutEntity.h"       // orionldPutEntity
+#include "orionld/serviceRoutines/orionldPutAttribute.h"    // orionldPutAttribute
 #include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
 #include "orionld/dds/ddsNotification.h"                    // Own interface
 
@@ -43,46 +43,39 @@ extern "C"
 //
 // ddsNotification -
 //
-void ddsNotification(KjNode* notificationP)
+void ddsNotification(const char* entityType, const char* entityId, const char* attrName, KjNode* notificationP)
 {
   KT_V("Got a notification from DDS");
   kjTreeLog2(notificationP, "notification", StDds);
 
   //
-  // Assuming the received entity is complete, we perform a PUT on the entity
+  // We receive entire NGSI-LD Attributes
   //
-  KjNode* idNodeP   = kjLookup(notificationP, "id");
-  KjNode* typeNodeP = kjLookup(notificationP, "type");
-  char*   id        = (idNodeP != NULL)? idNodeP->value.s : NULL;
-  char*   type      = (typeNodeP != NULL)? typeNodeP->value.s : NULL;
+  KjNode* aValueNodeP = kjLookup(notificationP, "attributeValue");
 
-  if ((id == NULL) || (type == NULL))
+  if (entityId == NULL)
   {
-    KT_W("Entity without id|type from DDS");
+    KT_W("Entity without id from DDS");
     return;
   }
 
-  if ((idNodeP->type != KjString) || (typeNodeP->type != KjString))
-  {
-    KT_W("Entity with id|type that is not a string from DDS");
-    return;
-  }
-
-  kjChildRemove(notificationP, idNodeP);
-  // kjChildRemove(notificationP, typeNodeP);
-
-  orionldState.payloadIdNode   = idNodeP;
+  // orionldState.payloadIdNode   = idNodeP;
   // orionldState.payloadTypeNode = typeNodeP;
 
-  orionldState.requestTree = notificationP;
-  orionldState.wildcard[0] = id;
-  orionldState.tenantP     = &tenant0;
-  orionldState.upsert      = true;
+  orionldState.wildcard[0]         = (char*) entityId;
+  orionldState.wildcard[1]         = (char*) attrName;  // The topic is the attribute long name
 
-  KT_T(StDds, "Calling orionldPutEntity");
+  orionldState.requestTree         = aValueNodeP;
+  orionldState.tenantP             = &tenant0;  // FIXME ... Use tenants?
+  orionldState.uriParams.type      = (char*) entityType;
+  orionldState.in.pathAttrExpanded = (char*) attrName;
+  orionldState.ddsSample           = true;
 
-  orionldPutEntity();
+  KT_T(StDds, "Calling orionldPutAttribute");
+
+  //
+  // If the entity does not exist, it needs to be created
+  // Except of course, if it is registered and exists elsewhere
+  //
+  orionldPutAttribute();
 }
-
-
-
