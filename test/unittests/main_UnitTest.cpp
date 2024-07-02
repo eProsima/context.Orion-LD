@@ -113,6 +113,8 @@ unsigned long long  outReqMsgMaxSize;
 bool                triggerOperation = false;
 bool                noArrayReduction = false;
 bool                ddsSupport       = false;
+char                ddsSubsTopics[512];
+char                ddsTopicType[512];
 
 
 
