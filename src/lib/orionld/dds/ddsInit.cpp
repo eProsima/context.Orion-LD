@@ -34,7 +34,6 @@ extern "C"
 
 #include "orionld/common/traceLevels.h"                     // kjTreeLog2
 #include "orionld/kjTree/kjNavigate.h"                      // kjNavigate
-#include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
 #include "orionld/dds/ddsSubscribe.h"                       // ddsSubscribe
 #include "orionld/dds/ddsNotification.h"                    // ddsNotification
 #include "orionld/dds/ddsConfigLoad.h"                      // ddsConfigLoad
