@@ -1,9 +1,9 @@
-#ifndef SRC_LIB_ORIONLD_COMMON_TRACELEVELS_H_
-#define SRC_LIB_ORIONLD_COMMON_TRACELEVELS_H_
+#ifndef SRC_LIB_ORIONLD_DDS_DDSCONFIGLOAD_H_
+#define SRC_LIB_ORIONLD_DDS_DDSCONFIGLOAD_H_
 
 /*
 *
-* Copyright 2022 FIWARE Foundation e.V.
+* Copyright 2024 FIWARE Foundation e.V.
 *
 * This file is part of Orion-LD Context Broker.
 *
@@ -25,22 +25,17 @@
 *
 * Author: Ken Zangelin
 */
-
-
-
-// ----------------------------------------------------------------------------
-//
-// Trace Levels -
-//
-typedef enum OrionldTraceLevels
+extern "C"
 {
-  StMhdInit    = 100,
-  StRequest    = 200,
-  StDds        = 201,
-  StDdsPublish = 202,
-  StDump       = 203,
-  StDdsDump    = 204,
-  StDdsConfig  = 205
-} OrionldTraceLevels;
+#include "kjson/kjson.h"                                    // Kjson
+}
 
-#endif  // SRC_LIB_ORIONLD_COMMON_TRACELEVELS_H_
+
+
+// -----------------------------------------------------------------------------
+//
+// ddsConfigLoad -
+//
+extern int ddsConfigLoad(Kjson* kjP, const char* configFile);
+
+#endif  // SRC_LIB_ORIONLD_DDS_DDSCONFIGLOAD_H_

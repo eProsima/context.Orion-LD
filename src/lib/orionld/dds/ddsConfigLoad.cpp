@@ -1,6 +1,3 @@
-#ifndef SRC_LIB_ORIONLD_DDS_DDSINIT_H_
-#define SRC_LIB_ORIONLD_DDS_DDSINIT_H_
-
 /*
 *
 * Copyright 2024 FIWARE Foundation e.V.
@@ -27,25 +24,32 @@
 */
 extern "C"
 {
+#include "kbase/kFileRead.h"                                // kFileRead
 #include "kjson/kjson.h"                                    // Kjson
+#include "kjson/kjParse.h"                                  // kjParse
+#include "ktrace/kTrace.h"                                  // trace messages - ktrace library
 }
 
+#include "orionld/dds/ddsConfigLoad.h"                      // Own interface
 
 
+
+KjNode* ddsConfigTree = NULL;
 // -----------------------------------------------------------------------------
 //
-// DdsOperationMode -
+// ddsConfigLoad -
 //
-typedef enum DdsOperationMode
+int ddsConfigLoad(Kjson* kjP, const char* configFile)
 {
-  DDSOpModeDefault
-} DdsOperationMode;
+  char* buf    = NULL;
+  int   bufLen = 0;
 
+  if (kFileRead((char*) "", (char*) configFile, &buf, &bufLen) != 0)
+    KT_RE(1, ("Error reading the DDS configuration file"));
 
-// -----------------------------------------------------------------------------
-//
-// ddsInit -
-//
-extern int ddsInit(Kjson* kjP, const char* ddsConfigFile, const char* ddsTopicType, char* ddsSubsTopics, DdsOperationMode ddsOpMode);
+  ddsConfigTree = kjParse(kjP, buf);
+  if (ddsConfigTree == NULL)
+    KT_RE(1, ("Error parsing the DDS configuration file"));
 
-#endif  // SRC_LIB_ORIONLD_DDS_DDSINIT_H_
+  return 0;
+}

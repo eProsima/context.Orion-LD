@@ -1,9 +1,9 @@
-#ifndef SRC_LIB_ORIONLD_COMMON_TRACELEVELS_H_
-#define SRC_LIB_ORIONLD_COMMON_TRACELEVELS_H_
+#ifndef SRC_LIB_ORIONLD_DDS_DDSCONFIGTOPICTOATTRIBUTE_H_
+#define SRC_LIB_ORIONLD_DDS_DDSCONFIGTOPICTOATTRIBUTE_H_
 
 /*
 *
-* Copyright 2022 FIWARE Foundation e.V.
+* Copyright 2024 FIWARE Foundation e.V.
 *
 * This file is part of Orion-LD Context Broker.
 *
@@ -28,19 +28,10 @@
 
 
 
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 //
-// Trace Levels -
+// ddsConfigTopicToAttribute -
 //
-typedef enum OrionldTraceLevels
-{
-  StMhdInit    = 100,
-  StRequest    = 200,
-  StDds        = 201,
-  StDdsPublish = 202,
-  StDump       = 203,
-  StDdsDump    = 204,
-  StDdsConfig  = 205
-} OrionldTraceLevels;
+extern char* ddsConfigTopicToAttribute(const char* topic, char** entityIdPP, char** entityTypePP);
 
-#endif  // SRC_LIB_ORIONLD_COMMON_TRACELEVELS_H_
+#endif  // SRC_LIB_ORIONLD_DDS_DDSCONFIGTOPICTOATTRIBUTE_H_

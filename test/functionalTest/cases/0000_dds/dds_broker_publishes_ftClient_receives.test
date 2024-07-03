@@ -25,7 +25,23 @@ Orion-LD + a DDS test client, the broker publishes, the test client receives not
 
 --SHELL-INIT--
 dbInit CB
-orionldStart CB -mongocOnly -dds
+echo '{
+  "dds": {
+    "topics": {
+      "Robot1/camera": {
+        "entityId": "urn:ngsi-ld:entities:Robot:1",
+        "entityType": "urn:ngsi-ld:Camera",
+        "attribute": "http://smartdatamodels.org/XX/attrs/camera"
+      },
+      "Robot1/arm1": {
+        "entityId": "urn:ngsi-ld:entities:Arm:1",
+        "entityType": "urn:ngsi-ld:Arm",
+        "attribute": "http://smartdatamodels.org/XX/attrs/arm1"
+      }
+    }
+  }
+}' > /tmp/ddsConfig
+orionldStart CB -mongocOnly -dds -ddsConfigFile /tmp/ddsConfig
 ftClientStart -v -t 0-5000
 
 --SHELL--
@@ -158,3 +174,4 @@ Date: REGEX(.*)
 brokerStop CB
 ftClientStop
 dbDrop CB
+rm -f /tmp/ddsConfig

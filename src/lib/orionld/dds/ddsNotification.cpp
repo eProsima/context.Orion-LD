@@ -35,6 +35,7 @@ extern "C"
 #include "orionld/common/tenantList.h"                      // tenant0
 #include "orionld/serviceRoutines/orionldPutAttribute.h"    // orionldPutAttribute
 #include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
+#include "orionld/dds/ddsConfigTopicToAttribute.h"          // ddsConfigTopicToAttribute
 #include "orionld/dds/ddsNotification.h"                    // Own interface
 
 
@@ -43,7 +44,7 @@ extern "C"
 //
 // ddsNotification -
 //
-void ddsNotification(const char* entityType, const char* entityId, const char* attrName, KjNode* notificationP)
+void ddsNotification(const char* entityType, const char* entityId, const char* topicName, KjNode* notificationP)
 {
   KT_V("Got a notification from DDS");
   kjTreeLog2(notificationP, "notification", StDds);
@@ -59,16 +60,48 @@ void ddsNotification(const char* entityType, const char* entityId, const char* a
     return;
   }
 
-  // orionldState.payloadIdNode   = idNodeP;
-  // orionldState.payloadTypeNode = typeNodeP;
+  //
+  // Criteria for obtaining the necessary attribute info (Entity ID+Type + Attribute long name):
+  //
+  //   1. Set the attribute long name to the topic name
+  //   2. Take all three from the DDS config file (depending on the topic name)
+  //   3. Override entity id+type with entityType+entityId from the parameters of this function
+  //
+
+  //
+  // GET the attribute long name (and entity id+type) from the DDS config file
+  //
+  char* eId               = NULL;
+  char* eType             = NULL;
+  char* attributeLongName = ddsConfigTopicToAttribute(topicName, &eId, &eType);
+
+  if (attributeLongName == NULL)  // Topic name NOT found in DDS config file
+    attributeLongName = (char*) topicName;
+
+  // Take entity id+type from config file unless given as parameters to this function (which would override)
+  if (entityType == NULL)
+    entityType = eType;
+  if (entityId == NULL)
+    entityId = eId;
+
+  // What to do if we have no entity id+type ?
+  // - The entity id is MANDATORY - cannot continue if we don't know the entity ID
+  // - The entity type is onbly needed when creating the entity - and we don't know right now whether the entity already exists.
+  //     So, we let it pass and get an error later (404 Not Found)
+  if (entityId == NULL)
+  {
+    KT_E(("Got a DDS sample for an entity whose ID cannot be obtained"));
+    return;
+  }
+
+  orionldState.uriParams.type      = (char*) entityType;
 
   orionldState.wildcard[0]         = (char*) entityId;
-  orionldState.wildcard[1]         = (char*) attrName;  // The topic is the attribute long name
+  orionldState.wildcard[1]         = (char*) attributeLongName;  // The topic is the attribute long name
 
   orionldState.requestTree         = aValueNodeP;
   orionldState.tenantP             = &tenant0;  // FIXME ... Use tenants?
-  orionldState.uriParams.type      = (char*) entityType;
-  orionldState.in.pathAttrExpanded = (char*) attrName;
+  orionldState.in.pathAttrExpanded = (char*) topicName;
   orionldState.ddsSample           = true;
 
   KT_T(StDds, "Calling orionldPutAttribute");

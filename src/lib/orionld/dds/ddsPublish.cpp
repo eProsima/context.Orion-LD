@@ -28,9 +28,10 @@ extern "C"
 #include "kjson/KjNode.h"                                   // KjNode
 }
 
-#include "orionld/dds/NgsildEntityPubSubTypes.h"
-#include "orionld/dds/NgsildEntity.h"
-#include "orionld/dds/NgsildPublisher.h"
+#include "orionld/common/traceLevels.h"                     // KT_T trace levels
+#include "orionld/dds/NgsildEntityPubSubTypes.h"            // NgsildEntityPubSubTypes
+#include "orionld/dds/NgsildEntity.h"                       // NgsildEntity
+#include "orionld/dds/NgsildPublisher.h"                    // NgsildPublisher
 #include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
 
 

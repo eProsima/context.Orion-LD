@@ -32,6 +32,8 @@ SET (SOURCES
   ddsNotification.cpp
   ddsInit.cpp
   kjTreeLog.cpp
+  ddsConfigTopicToAttribute.cpp
+  ddsConfigLoad.cpp
 )
 
 # Include directories
