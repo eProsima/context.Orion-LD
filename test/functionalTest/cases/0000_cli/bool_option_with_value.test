@@ -117,5 +117,6 @@ Usage: orionld  [option '-U' (extended usage)]
                 [option '-dds' (turn on DDS support)]
                 [option '-ddsSubsTopics' <topics to subscribe to on DDS>]
                 [option '-ddsTopicType' <DDS topic type>]
+                [option '-ddsConfigFile' <DDS configuration file>]
 
 --TEARDOWN--
