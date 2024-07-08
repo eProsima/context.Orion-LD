@@ -21,7 +21,7 @@
 # VALGRIND_READY - to mark the test ready for valgrindTestSuite.sh
 
 --NAME--
-Orion-LD + a DDS test client, the broker publishes, the test client receives notifications
+Orion-LD + a DDS test client, the broker publishes, via entity creation, the test client receives notifications
 
 --SHELL-INIT--
 dbInit CB
