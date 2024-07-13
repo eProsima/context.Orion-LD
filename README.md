@@ -101,7 +101,7 @@ Every merged pull request results in a new fixed tag in dockerhub/quay.io.
 
 Please note that for production and/or performance implementations, there is a thorough guide for that right [here](https://github.com/FIWARE/load-tests)
 
-If you want to use a more stable image, the latest release (as of January 2024) is
+If you want to use a more stable image, the latest release (as of July 2024) is
 [1.6.0](https://github.com/FIWARE/context.Orion-LD/releases/tag/1.6.0)
 
 ```console
