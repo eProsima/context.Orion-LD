@@ -362,7 +362,7 @@ bool orionldPutAttribute(void)
   if (ddsSupport == true)
     ddsPublishAttribute(ddsTopicType, entityType, entityId, apiAttributeP);
 
-response:
+ response:
   if (distOpList != NULL)
   {
     distOpResponses(distOpList, responseBody);
