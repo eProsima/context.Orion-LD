@@ -56,6 +56,11 @@ extern "C"
 #include "orionld/notifications/alteration.h"                    // alteration
 #include "orionld/notifications/sysAttrsStrip.h"                 // sysAttrsStrip
 #include "orionld/notifications/previousValuePopulate.h"         // previousValuePopulate
+#include "orionld/dds/ddsPublish.h"                              // ddsPublishAttribute
+#include "orionld/dds/ddsEntityCreateFromAttribute.h"            // ddsEntityCreateFromAttribute
+#include "orionld/dds/ddsAttributeCreate.h"                      // ddsAttributeCreate
+#include "orionld/serviceRoutines/orionldPostEntities.h"         // orionldPostEntities - if DDS and entity does not exist
+#include "orionld/serviceRoutines/orionldPostEntity.h"           // orionldPostEntity   - if DDS and attribute does not exist
 #include "orionld/serviceRoutines/orionldPatchAttribute.h"       // Own interface
 
 
@@ -237,6 +242,7 @@ char* dbModelEntityTypeExtract(KjNode* dbEntityP)
 }
 
 
+extern bool ddsAttributeCreate(KjNode* attrNodeP, const char* entityType, const char* attrName);
 
 // ----------------------------------------------------------------------------
 //
@@ -333,6 +339,9 @@ bool orionldPatchAttribute(void)
     entityType = dbModelEntityTypeExtract(dbEntityP);
   else if (orionldState.distributed == false)
   {
+    if (orionldState.ddsSample == true)
+      return ddsEntityCreateFromAttribute(orionldState.requestTree, entityId, orionldState.in.pathAttrExpanded);
+
     orionldError(OrionldResourceNotFound, "Entity Not Found", entityId, 404);
     return false;
   }
@@ -356,7 +365,8 @@ bool orionldPatchAttribute(void)
   // If the entity is not found locally and all distributed requests give 404
   // then it's a 404
   //
-  bool notFound = ((dbEntityP == NULL) && (orionldState.distOp.requests == orionldState.distOp.e404));
+  bool    notFound = ((dbEntityP == NULL) && (orionldState.distOp.requests == orionldState.distOp.e404));
+  KjNode* dbAttrP  = NULL;
 
   if ((notFound == false) && (orionldState.requestTree != NULL) && (orionldState.requestTree->value.firstChildP != NULL))  // Attribute left for local request
   {
@@ -370,11 +380,17 @@ bool orionldPatchAttribute(void)
       return false;
     }
 
-    KjNode* dbAttrP = (dbAttrsP != NULL)? kjLookup(dbAttrsP, longAttrNameEq) : NULL;
-    if ((dbAttrP == NULL) && (orionldState.distributed == false))
+    dbAttrP = (dbAttrsP != NULL)? kjLookup(dbAttrsP, longAttrNameEq) : NULL;
+    if (dbAttrP == NULL)
     {
-      orionldError(OrionldResourceNotFound, "Entity/Attribute Not Found", entityId, 404);
-      return false;
+      if (orionldState.ddsSample == true)
+        return ddsAttributeCreate(orionldState.requestTree, entityType, orionldState.in.pathAttrExpanded);
+
+      if (orionldState.distributed == false)
+      {
+        orionldError(OrionldResourceNotFound, "Entity/Attribute Not Found", entityId, 404);
+        return false;
+      }
     }
 
     if (dbAttrP != NULL)
@@ -422,7 +438,7 @@ bool orionldPatchAttribute(void)
       //   * the Entity Type (must take it from the DB - expanded
       //   * The Final API entity - converted from the final DB Entity
       //
-      KjNode*     _idNodeP         = kjLookup(dbEntityP, "_id");
+      KjNode* _idNodeP = kjLookup(dbEntityP, "_id");
 
       if (_idNodeP == NULL)
         LM_E(("Database Error (no _id in the DB for entity '%s')", entityId));
@@ -462,6 +478,12 @@ bool orionldPatchAttribute(void)
   {
     orionldError(OrionldResourceNotFound, "Entity/Attribute Not Found", entityId, 404);
     return false;
+  }
+
+  if ((ddsSupport == true) && (dbAttrP != NULL))
+  {
+    orionldState.requestTree->name = orionldState.in.pathAttrExpanded;
+    ddsPublishAttribute(ddsTopicType, entityType, entityId, orionldState.requestTree);
   }
 
   responseFix(responseBody, DoUpdateAttrs, 204, entityId);

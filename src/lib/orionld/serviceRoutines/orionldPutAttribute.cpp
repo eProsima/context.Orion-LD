@@ -45,6 +45,8 @@ extern "C"
 #include "orionld/mongoc/mongocAttributeReplace.h"               // mongocAttributeReplace
 #include "orionld/dds/kjTreeLog.h"                               // kjTreeLog2
 #include "orionld/dds/ddsPublish.h"                              // ddsPublishAttribute
+#include "orionld/dds/ddsEntityCreateFromAttribute.h"            // ddsEntityCreateFromAttribute
+#include "orionld/dds/ddsAttributeCreate.h"                      // ddsAttributeCreate
 #include "orionld/payloadCheck/pCheckAttribute.h"                // pCheckAttribute
 #include "orionld/dbModel/dbModelToApiEntity.h"                  // dbModelToApiEntity2
 #include "orionld/dbModel/dbModelFromApiAttribute.h"             // dbModelFromApiAttribute
@@ -60,8 +62,6 @@ extern "C"
 #include "orionld/notifications/alteration.h"                    // alteration
 #include "orionld/notifications/previousValuePopulate.h"         // previousValuePopulate
 #include "orionld/notifications/sysAttrsStrip.h"                 // sysAttrsStrip
-#include "orionld/serviceRoutines/orionldPostEntities.h"         // orionldPostEntities - if DDS and entity does not exist
-#include "orionld/serviceRoutines/orionldPostEntity.h"           // orionldPostEntity   - if DDS and attribute does not exist
 #include "orionld/serviceRoutines/orionldPutAttribute.h"         // Own Interface
 
 
@@ -121,48 +121,13 @@ bool orionldPutAttribute(void)
 
   if (dbEntityP == NULL)
   {
-    if (orionldState.ddsSample == true)
-    {
-      char* entityType = NULL;
-
-      kjTreeLog2(orionldState.requestTree, "Attribute", StDds);
-
-      // Create entity and continue
-      // What do I do if there is no entity type?
-      //
-      KjNode* entityTypeNodeP = (orionldState.requestTree->type == KjObject)? kjLookup(orionldState.requestTree, "entityType") : NULL;
-      if (entityTypeNodeP != NULL)
-      {
-        kjChildRemove(orionldState.requestTree, entityTypeNodeP);
-        entityType = entityTypeNodeP->value.s;
-      }
-      else
-        entityType = (char*) "T";  // FIXME: find the antity type in the config file, if not present as node "entityType" in orionldState.requestTree
-
-      orionldState.payloadIdNode   = kjString(orionldState.kjsonP, "id", entityId);
-      orionldState.payloadTypeNode = kjString(orionldState.kjsonP, "type", entityType);
-      KT_T(StDds, "Entity doesn't exist - calling orionldPostEntities");
-      if (orionldState.requestTree->type != KjObject)
-      {
-        KT_T(StDds, "But first, need to transform the incoming request tree into a JSON object");
-        KjNode* attributeP = orionldState.requestTree;
-        attributeP->name = attrName;
-        orionldState.requestTree = kjObject(orionldState.kjsonP, NULL);
-
-        kjChildAdd(orionldState.requestTree, attributeP);
-        kjTreeLog2(orionldState.requestTree, "Input KjNode tree to orionldPostEntities", StDds);
-      }
-
-      return orionldPostEntities();
-    }
-
     if (orionldState.distributed == false)
     {
-      {
-        // For DDS we must create the entity
-        orionldError(OrionldResourceNotFound, "Entity Not Found", entityId, 404);
-        return false;
-      }
+      if (orionldState.ddsSample == true)
+        return ddsEntityCreateFromAttribute(orionldState.requestTree, entityId, attrName);
+
+      orionldError(OrionldResourceNotFound, "Entity Not Found", entityId, 404);
+      return false;
     }
     else
       entityNotFoundLocally = true;
@@ -174,20 +139,7 @@ bool orionldPutAttribute(void)
     if (dbAttrP == NULL)
     {
       if (orionldState.ddsSample == true)
-      {
-        KT_T(StDds, "Attribute '%s' does not exist. It comes from DDS, so, it is created - by calling orionldPostEntity?noOverwrite=false", attrName);
-        orionldState.uriParamOptions.noOverwrite = false;
-        orionldState.uriParams.type = entityType;
-
-        KjNode* attributeP = orionldState.requestTree;
-        attributeP->name = attrName;
-        orionldState.requestTree = kjObject(orionldState.kjsonP, NULL);
-
-        kjChildAdd(orionldState.requestTree, attributeP);
-        kjTreeLog2(orionldState.requestTree, "Input KjNode tree to orionldPostEntity", StDds);
-
-        return orionldPostEntity();
-      }
+        return ddsAttributeCreate(orionldState.requestTree, entityType, attrName);
 
       if (orionldState.distributed == false)
       {

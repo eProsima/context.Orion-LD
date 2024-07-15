@@ -34,6 +34,8 @@ SET (SOURCES
   kjTreeLog.cpp
   ddsConfigTopicToAttribute.cpp
   ddsConfigLoad.cpp
+  ddsEntityCreateFromAttribute.cpp
+  ddsAttributeCreate.cpp
 )
 
 # Include directories
