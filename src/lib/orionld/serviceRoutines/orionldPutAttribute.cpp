@@ -44,6 +44,7 @@ extern "C"
 #include "orionld/mongoc/mongocEntityLookup.h"                   // mongocEntityLookup
 #include "orionld/mongoc/mongocAttributeReplace.h"               // mongocAttributeReplace
 #include "orionld/dds/kjTreeLog.h"                               // kjTreeLog2
+#include "orionld/dds/ddsPublish.h"                              // ddsPublishAttribute
 #include "orionld/payloadCheck/pCheckAttribute.h"                // pCheckAttribute
 #include "orionld/dbModel/dbModelToApiEntity.h"                  // dbModelToApiEntity2
 #include "orionld/dbModel/dbModelFromApiAttribute.h"             // dbModelFromApiAttribute
@@ -357,6 +358,9 @@ bool orionldPutAttribute(void)
 
   alterationP = alteration(entityId, entityType, finalApiEntity, apiAttributeAsEntityP, dbEntityP);
   alterationP->finalApiEntityWithSysAttrsP = finalApiEntityWithSysAttrs;
+
+  if (ddsSupport == true)
+    ddsPublishAttribute(ddsTopicType, entityType, entityId, apiAttributeP);
 
  response:
   if (distOpList != NULL)
