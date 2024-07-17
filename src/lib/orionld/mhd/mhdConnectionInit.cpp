@@ -1058,6 +1058,15 @@ static OrionLdRestService* serviceLookup(void)
 {
   OrionLdRestService* serviceP;
 
+  if (subordinatePath != NULL)
+  {
+    if (strcmp(orionldState.urlPath, subordinatePath) == 0)
+    {
+      LM_T(LmtSubordinate, ("Got a notification from a subordinate subscription"));
+      return subordinateNotificationServiceP;
+    }
+  }
+
   serviceP = orionldServiceLookup(&orionldRestServiceV[orionldState.verb]);
   if (serviceP == NULL)
   {

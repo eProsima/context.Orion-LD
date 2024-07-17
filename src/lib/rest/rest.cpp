@@ -37,6 +37,7 @@ extern "C"
 #include "kbase/kTime.h"                                         // kTimeGet, kTimeDiff
 #include "kalloc/kaBufferReset.h"                                // kaBufferReset
 #include "kjson/kjFree.h"                                        // kjFree
+#include "kjson/kjRender.h"                                      // kjFastRender
 }
 
 #include "logMsg/logMsg.h"
@@ -72,6 +73,7 @@ extern "C"
 #include "orionld/mhd/mhdConnectionPayloadRead.h"                // mhdConnectionPayloadRead
 #include "orionld/mhd/mhdConnectionTreat.h"                      // mhdConnectionTreat
 #include "orionld/distOp/distOpListRelease.h"                    // distOpListRelease
+#include "orionld/service/orionldServiceNotFound.h"              // orionldServiceNotFound
 
 #include "rest/HttpHeaders.h"                                    // HTTP_* defines
 #include "rest/Verb.h"
@@ -1157,6 +1159,13 @@ ConnectionInfo* connectionTreatInit
 
   ciP->restServiceP = restServiceLookup(ciP, &badVerb);
 
+  if (badVerb == true)
+  {
+    orionldServiceNotFound();
+    orionldState.orionldErrorDone = true;  // Don't override error - don't call orionldError()
+    return ciP;
+  }
+
   if (urlCheck(ciP, orionldState.urlPath) == false)
   {
     alarmMgr.badInput(orionldState.clientIp, "error in URI path");
@@ -1387,11 +1396,23 @@ static MHD_Result connectionTreat
 
     if ((mongocOnly == true) && (strcmp("/exit/harakiri", url) != 0) && (strcmp("/version", url) != 0))
     {
-      OrionError error(SccNotImplemented, "Non NGSI-LD requests are not supported with -mongocOnly is set");
-      LM_E(("Non NGSI-LD requests are not supported with -mongocOnly is set"));
+      if (orionldState.orionldErrorDone == false)
+      {
+        OrionError error(SccNotImplemented, "Non NGSI-LD requests are not supported with -mongocOnly is set");
+        LM_E(("Non NGSI-LD requests are not supported with -mongocOnly is set"));
 
-      orionldState.httpStatusCode = 501;
-      ciP->answer                 = error.smartRender(orionldState.apiVersion);
+        orionldState.httpStatusCode = 501;
+        ciP->answer                 = error.smartRender(orionldState.apiVersion);
+      }
+      else
+      {
+        char     buf[2048];
+        KjNode*  errorTree = pdTreeCreate(orionldState.pd.type, orionldState.pd.title, orionldState.pd.detail);
+
+        orionldState.httpStatusCode = orionldState.pd.status;
+        kjFastRender(errorTree, buf);
+        ciP->answer = buf;
+      }
 
       return MHD_YES;
     }

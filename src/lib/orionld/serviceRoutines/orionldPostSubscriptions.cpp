@@ -92,7 +92,7 @@ extern "C"
 //
 SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheItem* rciP, const char* entityType)
 {
-  LM_T(LmtSR, ("Creating a subscription subordinate to '%s' on '%s'", cSubP->subscriptionId, rciP->regId));
+  LM_T(LmtSubordinate, ("Creating a subscription subordinate to '%s' on '%s'", cSubP->subscriptionId, rciP->regId));
 
   int  runNo = 1;
 
@@ -104,8 +104,12 @@ SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheIt
   char subSubId[128];
   snprintf(subSubId, sizeof(subSubId), "%s:%d", cSubP->subscriptionId, runNo);
 
-  char notificationUrl[256];
-  snprintf(notificationUrl, sizeof(notificationUrl), "http://%s/ngsi-ld/ex/v1/notifications/%s", localIpAndPort, cSubP->subscriptionId);
+  char notificationUrl[512];
+
+  if (subordinateEndpoint[0] != 0)
+    snprintf(notificationUrl, sizeof(notificationUrl), "%s", subordinateEndpoint);
+  else
+    snprintf(notificationUrl, sizeof(notificationUrl), "http://%s/ngsi-ld/ex/v1/notifications/%s", localIpAndPort, cSubP->subscriptionId);
 
   KjNode* bodyP         = kjObject(orionldState.kjsonP, NULL);
   KjNode* idP           = kjString(orionldState.kjsonP, "id", subSubId);

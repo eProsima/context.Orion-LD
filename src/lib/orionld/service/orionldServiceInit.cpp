@@ -218,6 +218,7 @@ static void restServicePrepare(OrionLdRestService* serviceP, OrionLdRestServiceS
   else if (serviceP->serviceRoutine == orionldPostNotification)
   {
     serviceP->uriParams |= ORIONLD_URIPARAM_SUBSCRIPTION_ID;
+    subordinateNotificationServiceP = serviceP;
   }
   else if (serviceP->serviceRoutine == orionldGetEntities)
   {

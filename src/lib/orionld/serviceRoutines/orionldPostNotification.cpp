@@ -43,6 +43,39 @@ extern "C"
 
 
 
+// -----------------------------------------------------------------------------
+//
+// subParentLookup -
+//
+static CachedSubscription* subParentLookup(char* subordinateSubId)
+{
+  LM_T(LmtSubordinate, ("Looking for subordinate subscription '%s' in the subscription cache", subordinateSubId));
+  for (CachedSubscription* cSubP = subCacheHeadGet(); cSubP != NULL; cSubP = cSubP->next)
+  {
+    LM_T(LmtSubordinate, ("Checking subscription '%s' to see if it's the parent", cSubP->subscriptionId));
+    if (cSubP->subordinateP == NULL)
+    {
+      LM_T(LmtSubordinate, ("It's not - no subordinates for '%s'", cSubP->subscriptionId));
+      continue;
+    }
+
+    for (SubordinateSubscription* subordinateP = cSubP->subordinateP; subordinateP != NULL; subordinateP = subordinateP->next)
+    {
+      LM_T(LmtSubordinate, ("Comparing '%s' with '%s' of parent '%s'", subordinateP->subscriptionId, subordinateSubId, cSubP->subscriptionId));
+      if (strcmp(subordinateP->subscriptionId, subordinateSubId) == 0)
+      {
+        LM_T(LmtSubordinate, ("Found it!"));
+        return cSubP;
+      }
+    }
+  }
+
+  LM_T(LmtSubordinate, ("No parent subscription found"));
+  return NULL;
+}
+
+
+
 // ----------------------------------------------------------------------------
 //
 // orionldPostNotification -
@@ -50,6 +83,29 @@ extern "C"
 bool orionldPostNotification(void)
 {
   char* parentSubId = orionldState.wildcard[0];
+
+  if (parentSubId == NULL)
+  {
+    // Need to lookup the subscriptionId (from the URL param subscriptionId) in all subscriptions to find the parent
+    LM_T(LmtSubordinate, ("URL PATH: '%s'", orionldState.urlPath));
+    LM_T(LmtSubordinate, ("URL Param 'subscriptionId': '%s'", orionldState.uriParams.subscriptionId));
+
+    if (orionldState.uriParams.subscriptionId == NULL)
+    {
+      orionldError(OrionldInvalidRequest, "Invalid notification", "no subscriptionId as URL param from subordinate subscription", 400);
+      return false;
+    }
+
+    CachedSubscription* parentP = subParentLookup(orionldState.uriParams.subscriptionId);
+
+    if (parentP == NULL)
+    {
+      orionldError(OrionldInternalError, "Unable to forward notification (parent subscription not found)", orionldState.uriParams.subscriptionId, 400);
+      return false;
+    }
+
+    parentSubId = parentP->subscriptionId;
+  }
 
   if (distSubsEnabled == false)
   {
@@ -61,9 +117,9 @@ bool orionldPostNotification(void)
     return true;
   }
 
-  LM_T(LmtSR, ("Got a notification on remote subscription subordinate to '%s'", parentSubId));
+  LM_T(LmtSubordinate, ("Got a notification on remote subscription subordinate to '%s'", parentSubId));
 
-  kjTreeLog(orionldState.requestTree, "notification", LmtSR);
+  kjTreeLog(orionldState.requestTree, "notification", LmtSubordinate);
 
   CachedSubscription* cSubP = subCacheItemLookup(orionldState.tenantP->tenant, parentSubId);
   if (cSubP == NULL)
