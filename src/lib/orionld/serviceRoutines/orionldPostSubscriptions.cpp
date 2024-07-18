@@ -107,9 +107,11 @@ SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheIt
   char notificationUrl[512];
 
   if (subordinateEndpoint[0] != 0)
-    snprintf(notificationUrl, sizeof(notificationUrl), "%s", subordinateEndpoint);
+    snprintf(notificationUrl, sizeof(notificationUrl), "%s/notifications/%s", subordinateEndpoint, cSubP->subscriptionId);
   else
     snprintf(notificationUrl, sizeof(notificationUrl), "http://%s/ngsi-ld/ex/v1/notifications/%s", localIpAndPort, cSubP->subscriptionId);
+
+  LM_T(LmtSubordinate, ("URL for subordinate subscription: '%s'", notificationUrl));
 
   KjNode* bodyP         = kjObject(orionldState.kjsonP, NULL);
   KjNode* idP           = kjString(orionldState.kjsonP, "id", subSubId);

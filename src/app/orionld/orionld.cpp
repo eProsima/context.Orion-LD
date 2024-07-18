@@ -1087,10 +1087,15 @@ int main(int argC, char* argV[])
     if ((slash != NULL) && (slash[1] == '/') && (slash[2] != 0))  // xxx:// is skipped
       slash = strchr(&slash[2], '/');
 
-    subordinatePath = slash;
-    LM_T(LmtSubordinate, ("subordinateEndpoint: '%s'", subordinateEndpoint));
-    LM_T(LmtSubordinate, ("subordinatePath:     '%s'", subordinatePath));
+    char* prefix = slash;
+    subordinatePathLen = snprintf(subordinatePath, sizeof(subordinatePath) - 1, "%s/notifications/", prefix);
+
+    LM_T(LmtSubordinate, ("entity subordinate prefix: '%s'", subordinateEndpoint));
+    LM_T(LmtSubordinate, ("path portion:              '%s'", prefix));
+    LM_T(LmtSubordinate, ("subordinatePath:           '%s'", subordinatePath));
   }
+  else
+    bzero(subordinatePath, sizeof(subordinatePath));
 
 #if 0
   //

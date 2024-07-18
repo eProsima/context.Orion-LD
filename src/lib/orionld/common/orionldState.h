@@ -655,7 +655,8 @@ extern char                   postgresServerVersion[128];
 // Variables for notifications from subordinate subscriptions (distributed subscriptions)
 //
 extern char                subordinateEndpoint[256];
-extern char*               subordinatePath;
+extern char                subordinatePath[256];
+extern int                 subordinatePathLen;
 extern OrionLdRestService* subordinateNotificationServiceP;
 
 

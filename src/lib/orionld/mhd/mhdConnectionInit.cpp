@@ -1058,11 +1058,13 @@ static OrionLdRestService* serviceLookup(void)
 {
   OrionLdRestService* serviceP;
 
-  if (subordinatePath != NULL)
+  if (subordinatePath[0] != 0)
   {
-    if (strcmp(orionldState.urlPath, subordinatePath) == 0)
+    if (strncmp(orionldState.urlPath, subordinatePath, subordinatePathLen) == 0)
     {
-      LM_T(LmtSubordinate, ("Got a notification from a subordinate subscription"));
+      orionldState.wildcard[0] = &orionldState.urlPath[subordinatePathLen];
+      LM_T(LmtSubordinate, ("Got a notification from a subordinate subscription (parent sub: '%s')", orionldState.wildcard[0]));
+      // orionldState.subordinateNotification = true;
       return subordinateNotificationServiceP;
     }
   }

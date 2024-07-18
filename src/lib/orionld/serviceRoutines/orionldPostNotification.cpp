@@ -42,7 +42,7 @@ extern "C"
 #include "orionld/serviceRoutines/orionldPostNotification.h"   // Own interface
 
 
-
+#if 0
 // -----------------------------------------------------------------------------
 //
 // subParentLookup -
@@ -73,6 +73,7 @@ static CachedSubscription* subParentLookup(char* subordinateSubId)
   LM_T(LmtSubordinate, ("No parent subscription found"));
   return NULL;
 }
+#endif
 
 
 
@@ -84,13 +85,19 @@ bool orionldPostNotification(void)
 {
   char* parentSubId = orionldState.wildcard[0];
 
-  if (parentSubId == NULL)
+#if 0
+  if (orionldState.subordinateNotification == false)
+    parentSubId = orionldState.wildcard[0];
+  else
   {
+    parentSubId = &orionldState.urlPath[subordinatePathLen];
+
     // Need to lookup the subscriptionId (from the URL param subscriptionId) in all subscriptions to find the parent
     LM_T(LmtSubordinate, ("URL PATH: '%s'", orionldState.urlPath));
+    LM_T(LmtSubordinate, ("Possible parent sub id: '%s'", &orionldState.urlPath[subordinatePathLen]));
     LM_T(LmtSubordinate, ("URL Param 'subscriptionId': '%s'", orionldState.uriParams.subscriptionId));
 
-    if (orionldState.uriParams.subscriptionId == NULL)
+    if (orionldState.uriParams.subscriptionId != NULL)
     {
       orionldError(OrionldInvalidRequest, "Invalid notification", "no subscriptionId as URL param from subordinate subscription", 400);
       return false;
@@ -106,6 +113,7 @@ bool orionldPostNotification(void)
 
     parentSubId = parentP->subscriptionId;
   }
+#endif
 
   if (distSubsEnabled == false)
   {
