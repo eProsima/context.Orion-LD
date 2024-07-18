@@ -61,6 +61,12 @@ payload='{
     }
   ],
   "endpoint": "localhost:'$CP1_PORT'",
+  "contextSourceInfo": [
+    {
+      "key": "X-Auth-Token",
+      "value": "urn:ngsi-ld:request"
+    }
+  ],
   "operations": [ "createEntity", "retrieveEntity", "mergeEntity", "createSubscription" ]
 }'
 orionCurl --url /ngsi-ld/v1/csourceRegistrations --payload "$payload"
@@ -198,6 +204,12 @@ Link: <https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-contextREGEX(.*)
         "notification": {
             "endpoint": {
                 "accept": "application/json",
+                "receiverInfo": [
+                    {
+                        "key": "X-Auth-Token",
+                        "value": "urn:ngsi-ld:request"
+                    }
+                ],
                 "uri": "http://REGEX(.*)/ngsi-ld/ex/v1/notifications/urn:ngsi-ld:Subscription:S1"
             },
             "format": "normalized",

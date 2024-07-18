@@ -132,6 +132,16 @@ SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheIt
   kjChildAdd(entityP, entityTypeP);
 
   kjChildAdd(notificationP, endpointP);
+
+  // contextSourceInfo?
+  KjNode* contextSourceInfoP = kjLookup(rciP->regTree, "contextSourceInfo");
+  if (contextSourceInfoP != NULL)
+  {
+    KjNode* receiverInfo = kjClone(orionldState.kjsonP, contextSourceInfoP);
+    receiverInfo->name = (char*) "receiverInfo";
+    kjChildAdd(endpointP, receiverInfo);
+  }
+
   kjChildAdd(endpointP, urlP);
 
   kjTreeLog(bodyP, "Subordinate subscription", LmtSR);
