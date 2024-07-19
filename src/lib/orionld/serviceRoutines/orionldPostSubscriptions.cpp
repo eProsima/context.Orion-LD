@@ -133,6 +133,7 @@ SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheIt
 
   kjChildAdd(notificationP, endpointP);
 
+  //
   // contextSourceInfo
   //
   // Taking it from the registration
@@ -149,6 +150,14 @@ SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheIt
   }
 
   kjChildAdd(endpointP, urlP);
+
+
+  // throttling
+  if (cSubP->throttling > 0)
+  {
+    KjNode* throttlingP = kjFloat(orionldState.kjsonP, "throttling", cSubP->throttling);
+    kjChildAdd(bodyP, throttlingP);
+  }
 
   kjTreeLog(bodyP, "Subordinate subscription", LmtSR);
 
