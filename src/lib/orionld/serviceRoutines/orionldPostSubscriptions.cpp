@@ -22,6 +22,9 @@
 *
 * Author: Ken Zangelin
 */
+#include <string>                                              // std::string
+#include <map>                                                 // std::map
+
 extern "C"
 {
 #include "kbase/kMacros.h"                                     // K_FT
@@ -131,25 +134,38 @@ SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheIt
   kjChildAdd(entitiesP, entityP);
   kjChildAdd(entityP, entityTypeP);
 
+  kjChildAdd(endpointP, urlP);
   kjChildAdd(notificationP, endpointP);
 
   //
-  // contextSourceInfo
+  // contextSourceInfo => receiverInfo
   //
   // Taking it from the registration
-  // KjNode* contextSourceInfoP = kjLookup(rciP->regTree, "contextSourceInfo");
+  // KjNode* contextSourceInfoP = kjLookup(rciP->regTree, "contextSourceInfo"); ...
   //
   // For now, we take it from the subscription:
   //
-  KjNode* contextSourceInfoP = kjLookup(endpointP, "contextSourceInfo");
-  if (contextSourceInfoP != NULL)
+  KjNode* receiverInfoP = NULL;
+  for (std::map<std::string, std::string>::const_iterator it = cSubP->httpInfo.headers.begin(); it != cSubP->httpInfo.headers.end(); ++it)
   {
-    KjNode* receiverInfo = kjClone(orionldState.kjsonP, contextSourceInfoP);
-    receiverInfo->name = (char*) "receiverInfo";
-    kjChildAdd(endpointP, receiverInfo);
-  }
+    const char* key    = it->first.c_str();
+    char*       value  = (char*) it->second.c_str();
 
-  kjChildAdd(endpointP, urlP);
+    KjNode* keyP   = kjString(orionldState.kjsonP, "key", key);
+    KjNode* valueP = kjString(orionldState.kjsonP, "value", value);
+    KjNode* kvP    = kjObject(orionldState.kjsonP, NULL);
+
+    kjChildAdd(kvP, keyP);
+    kjChildAdd(kvP, valueP);
+
+    if (receiverInfoP == NULL)
+    {
+      receiverInfoP = kjArray(orionldState.kjsonP, "receiverInfo");
+      kjChildAdd(endpointP, receiverInfoP);
+    }
+
+    kjChildAdd(receiverInfoP, kvP);
+  }
 
 
   // throttling

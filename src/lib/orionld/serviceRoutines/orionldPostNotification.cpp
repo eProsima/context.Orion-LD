@@ -140,16 +140,33 @@ bool orionldPostNotification(void)
   //
   kjTreeLog(orionldState.in.httpHeaders, "httpHeaders", LmtSubordinate);
 
-  // Content-Type
+
+  //
+  // Content-Type - hardcoded to application/json ...  (FIXME)
+  //
   httpRequestHeaderAdd(&headers[0], "Content-Type", "application/json", 0);
   headerIx = 1;
 
-  // Link
+
+  //
+  // Link - not present if application/ld+json (FIXME)
+  //
   KjNode* linkP = kjLookup(orionldState.in.httpHeaders, "Link");
   if (linkP != NULL)
   {
     kjChildRemove(orionldState.in.httpHeaders, linkP);
     httpRequestHeaderAdd(&headers[headerIx], "Link", linkP->value.s, 0);
+    ++headerIx;
+  }
+
+  //
+  // NGSILD-Tenant
+  //
+  KjNode* tenantP = kjLookup(orionldState.in.httpHeaders, "NGSILD-Tenant");
+  if (tenantP != NULL)
+  {
+    kjChildRemove(orionldState.in.httpHeaders, tenantP);
+    httpRequestHeaderAdd(&headers[headerIx], "NGSILD-Tenant", linkP->value.s, 0);
     ++headerIx;
   }
 
@@ -165,13 +182,13 @@ bool orionldPostNotification(void)
     {
       KjNode* inHeaderP = kjLookup(orionldState.in.httpHeaders, key);
 
-      if (inHeaderP != NULL)
+      if (strcmp(value, "urn:ngsi-ld:request") == 0)
       {
-        if (strcmp(value, "urn:ngsi-ld:request") == 0)
-          value = inHeaderP->value.s;
+        if (inHeaderP != NULL)
+          httpRequestHeaderAdd(&headers[headerIx], key, inHeaderP->value.s, 0);
       }
-
-      httpRequestHeaderAdd(&headers[headerIx], key, value, 0);
+      else
+        httpRequestHeaderAdd(&headers[headerIx], key, value, 0);
     }
 
     ++headerIx;
