@@ -133,8 +133,14 @@ SubordinateSubscription* subordinateCreate(CachedSubscription* cSubP, RegCacheIt
 
   kjChildAdd(notificationP, endpointP);
 
-  // contextSourceInfo?
-  KjNode* contextSourceInfoP = kjLookup(rciP->regTree, "contextSourceInfo");
+  // contextSourceInfo
+  //
+  // Taking it from the registration
+  // KjNode* contextSourceInfoP = kjLookup(rciP->regTree, "contextSourceInfo");
+  //
+  // For now, we take it from the subscription:
+  //
+  KjNode* contextSourceInfoP = kjLookup(endpointP, "contextSourceInfo");
   if (contextSourceInfoP != NULL)
   {
     KjNode* receiverInfo = kjClone(orionldState.kjsonP, contextSourceInfoP);
@@ -439,8 +445,11 @@ bool orionldPostSubscriptions(void)
   //
   // Any subordinate subscriptions needed?
   //
+  LM_T(LmtSubordinate, ("Any subordinate subscriptions needed?"));
   if ((distSubsEnabled == true) && (orionldState.uriParams.local == false))
   {
+    LM_T(LmtSubordinate, ("At least, subordinate subscriptions are ON - c hecking regs"));
+
     //
     // Find matching regs
     // Create a subordinate subscription in brokers behind matching regs, if "subCreate" is in "operations"
@@ -449,8 +458,10 @@ bool orionldPostSubscriptions(void)
     {
       char* entityTypeP;
 
+      LM_T(LmtSubordinate, ("Checking reg '%s' for match to subscription '%s'", rciP->regId, cSubP->subscriptionId));
       if (regMatchSubscription(rciP, cSubP, &entityTypeP) == true)
       {
+        LM_T(LmtSubordinate, ("Reg '%s' is a match - creating subordinate subscription", rciP->regId));
         SubordinateSubscription* subSubP = subordinateCreate(cSubP, rciP, entityTypeP);
 
         // Add the subordinate to subP
@@ -473,6 +484,8 @@ bool orionldPostSubscriptions(void)
 
         kjChildAdd(subordinateP, subSubNodeP);
       }
+      else
+        LM_T(LmtSubordinate, ("Reg '%s' is not a match", rciP->regId));
     }
   }
 

@@ -22,6 +22,9 @@
 *
 * Author: Ken Zangelin
 */
+#include <string>                                              // std::string
+#include <map>                                                 // std::map
+
 extern "C"
 {
 #include "kjson/KjNode.h"                                      // KjNode
@@ -147,7 +150,8 @@ bool orionldPostNotification(void)
   KjNode*               responseTree = NULL;
   int                   httpStatus;
   HttpKeyValue          uriParams[2];
-  HttpKeyValue          headers[3];
+  HttpKeyValue          headers[20];
+  int                   headerIx = 0;
 
   bzero(&uriParams, sizeof(uriParams));
   bzero(&headers, sizeof(headers));
@@ -160,6 +164,22 @@ bool orionldPostNotification(void)
   LM_T(LmtSR, ("url: '%s'", url));
 
   httpRequestHeaderAdd(&headers[0], "Content-Type", "application/json", 0);
+  headerIx = 1;
+
+  // Headers from "receiverInfo"
+  for (std::map<std::string, std::string>::const_iterator it = cSubP->httpInfo.headers.begin(); it != cSubP->httpInfo.headers.end(); ++it)
+  {
+    const char* key    = it->first.c_str();
+    char*       value  = (char*) it->second.c_str();
+
+    if (headerIx >= 19)
+      LM_W(("Too many headers (change and recompile for more than 20 headers) - skipping '%s'", key));
+    else
+      httpRequestHeaderAdd(&headers[headerIx], key, value, 0);
+
+    ++headerIx;
+  }
+
   httpStatus = httpRequest(cSubP->ip, "POST", url, orionldState.requestTree, uriParams, headers, 5000, &responseTree, &pd);
   if (httpStatus != 200)
   {
