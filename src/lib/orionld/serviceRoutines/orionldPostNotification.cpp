@@ -29,6 +29,7 @@ extern "C"
 {
 #include "kjson/KjNode.h"                                      // KjNode
 #include "kjson/kjLookup.h"                                    // kjLookup
+#include "kjson/kjBuilder.h"                                   // kjChildRemove
 }
 
 #include "logMsg/logMsg.h"                                     // LM_*
@@ -88,36 +89,6 @@ bool orionldPostNotification(void)
 {
   char* parentSubId = orionldState.wildcard[0];
 
-#if 0
-  if (orionldState.subordinateNotification == false)
-    parentSubId = orionldState.wildcard[0];
-  else
-  {
-    parentSubId = &orionldState.urlPath[subordinatePathLen];
-
-    // Need to lookup the subscriptionId (from the URL param subscriptionId) in all subscriptions to find the parent
-    LM_T(LmtSubordinate, ("URL PATH: '%s'", orionldState.urlPath));
-    LM_T(LmtSubordinate, ("Possible parent sub id: '%s'", &orionldState.urlPath[subordinatePathLen]));
-    LM_T(LmtSubordinate, ("URL Param 'subscriptionId': '%s'", orionldState.uriParams.subscriptionId));
-
-    if (orionldState.uriParams.subscriptionId != NULL)
-    {
-      orionldError(OrionldInvalidRequest, "Invalid notification", "no subscriptionId as URL param from subordinate subscription", 400);
-      return false;
-    }
-
-    CachedSubscription* parentP = subParentLookup(orionldState.uriParams.subscriptionId);
-
-    if (parentP == NULL)
-    {
-      orionldError(OrionldInternalError, "Unable to forward notification (parent subscription not found)", orionldState.uriParams.subscriptionId, 400);
-      return false;
-    }
-
-    parentSubId = parentP->subscriptionId;
-  }
-#endif
-
   if (distSubsEnabled == false)
   {
     LM_W(("Got a notification on remote subscription subordinate to '%s', but, distributed subscriptions are not enabled", parentSubId));
@@ -160,13 +131,29 @@ bool orionldPostNotification(void)
   uriParams[0].value = (char*) parentSubId;
 
   snprintf(url, sizeof(url), "%s://%s:%d/%s", cSubP->protocolString, cSubP->ip, cSubP->port, cSubP->rest);
-  LM_T(LmtSR, ("ip:  '%s'", cSubP->ip));
-  LM_T(LmtSR, ("url: '%s'", url));
+  LM_T(LmtSubordinate, ("ip:  '%s'", cSubP->ip));
+  LM_T(LmtSubordinate, ("url: '%s'", url));
 
+
+  //
+  // HTTP Headers
+  //
+  kjTreeLog(orionldState.in.httpHeaders, "httpHeaders", LmtSubordinate);
+
+  // Content-Type
   httpRequestHeaderAdd(&headers[0], "Content-Type", "application/json", 0);
   headerIx = 1;
 
-  // Headers from "receiverInfo"
+  // Link
+  KjNode* linkP = kjLookup(orionldState.in.httpHeaders, "Link");
+  if (linkP != NULL)
+  {
+    kjChildRemove(orionldState.in.httpHeaders, linkP);
+    httpRequestHeaderAdd(&headers[headerIx], "Link", linkP->value.s, 0);
+    ++headerIx;
+  }
+
+  // Headers from "receiverInfo" (differently stored in CachedSubscription)
   for (std::map<std::string, std::string>::const_iterator it = cSubP->httpInfo.headers.begin(); it != cSubP->httpInfo.headers.end(); ++it)
   {
     const char* key    = it->first.c_str();
@@ -175,7 +162,17 @@ bool orionldPostNotification(void)
     if (headerIx >= 19)
       LM_W(("Too many headers (change and recompile for more than 20 headers) - skipping '%s'", key));
     else
+    {
+      KjNode* inHeaderP = kjLookup(orionldState.in.httpHeaders, key);
+
+      if (inHeaderP != NULL)
+      {
+        if (strcmp(value, "urn:ngsi-ld:request") == 0)
+          value = inHeaderP->value.s;
+      }
+
       httpRequestHeaderAdd(&headers[headerIx], key, value, 0);
+    }
 
     ++headerIx;
   }
@@ -184,7 +181,7 @@ bool orionldPostNotification(void)
   if (httpStatus != 200)
   {
     LM_W(("httpRequest for a forwarded notification gave HTTP status %d", httpStatus));
-    kjTreeLog(responseTree, "forwarded notification response body", LmtSR);
+    kjTreeLog(responseTree, "forwarded notification response body", LmtSubordinate);
   }
 
   return true;
