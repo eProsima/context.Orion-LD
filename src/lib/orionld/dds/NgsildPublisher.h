@@ -58,8 +58,8 @@ extern "C"
 
 #include "orionld/common/traceLevels.h"                     // Trace Levels
 
-#include "orionld/dds/NgsildEntityPubSubTypes.h"
-#include "orionld/dds/NgsildEntity.h"
+#include "orionld/dds/NgsildEntityPubSubTypes.hpp"
+#include "orionld/dds/NgsildEntity.hpp"
 #include "orionld/dds/DdsNotificationSender.h"              // DdsNotificationSender
 
 using namespace eprosima::fastdds::dds;
@@ -87,7 +87,7 @@ class NgsildPublisher  // : DataWriterListener
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
-    , type_(new NgsildEntityPubSubType(topicType))
+    , type_(new NgsildEntityPubSubType())
   {
   }
 

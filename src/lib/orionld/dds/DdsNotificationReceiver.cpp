@@ -43,7 +43,7 @@ extern "C"
 #include "orionld/common/traceLevels.h"                        // Trace levels
 #include "orionld/dds/config.h"                                // DDS_RELIABLE, ...
 #include "orionld/dds/kjTreeLog.h"                             // kjTreeLog2
-#include "orionld/dds/NgsildEntity.h"                          // NgsildEntity
+#include "orionld/dds/NgsildEntity.hpp"                        // NgsildEntity
 #include "orionld/dds/DdsNotificationReceiver.h"               // The class
 
 using namespace eprosima::fastdds::dds;
@@ -76,7 +76,7 @@ void DdsNotificationReceiver::on_data_available(DataReader* reader)
 
   KT_T(StDds, "Notification arrived");
 
-  if (reader->take_next_sample(&ngsildEntity_, &info) == ReturnCode_t::RETCODE_OK)
+  if (reader->take_next_sample(&ngsildEntity_, &info) == eprosima::fastdds::dds::RETCODE_OK)
   {
     if (info.valid_data)
     {

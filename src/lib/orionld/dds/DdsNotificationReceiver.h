@@ -52,7 +52,7 @@
 #include "fastdds/dds/topic/TypeSupport.hpp"
 
 #include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
-#include "orionld/dds/NgsildEntity.h"                       // NgsildEntity
+#include "orionld/dds/NgsildEntity.hpp"                     // NgsildEntity
 #include "orionld/dds/kjTreeLog.h"                          // kjTreeLog2
 
 

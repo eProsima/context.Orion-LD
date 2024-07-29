@@ -29,8 +29,8 @@ extern "C"
 }
 
 #include "orionld/common/traceLevels.h"                     // KT_T trace levels
-#include "orionld/dds/NgsildEntityPubSubTypes.h"            // NgsildEntityPubSubTypes
-#include "orionld/dds/NgsildEntity.h"                       // NgsildEntity
+#include "orionld/dds/NgsildEntityPubSubTypes.hpp"          // NgsildEntityPubSubTypes
+#include "orionld/dds/NgsildEntity.hpp"                     // NgsildEntity
 #include "orionld/dds/NgsildPublisher.h"                    // NgsildPublisher
 #include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
 

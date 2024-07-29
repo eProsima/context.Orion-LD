@@ -21,8 +21,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 
 SET (SOURCES
-  NgsildEntity.cxx
   NgsildEntityPubSubTypes.cxx
+  NgsildEntityTypeObjectSupport.cxx
   NgsildPublisher.cpp
   NgsildSubscriber.cpp
   DdsNotificationReceiver.cpp
@@ -42,6 +42,10 @@ SET (SOURCES
 # -----------------------------------------------------------------
 include_directories("${PROJECT_SOURCE_DIR}/src/lib")
 
+
+# Include ddsModule
+# -----------------------------------------------------------------
+add_subdirectory(ddsModule)
 
 # Library declaration
 # -----------------------------------------------------------------

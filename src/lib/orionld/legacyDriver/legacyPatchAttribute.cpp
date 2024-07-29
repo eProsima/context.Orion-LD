@@ -582,13 +582,13 @@ bool kjAttributeToNgsiContextAttribute(ContextAttribute* caP, KjNode* inAttribut
 
       if (mdP->type == KjString)
       {
-        char errorString[256];
+        std::string errorString(256, '\0');
 
-        double timestamp = dateTimeFromString(mdP->value.s, errorString, sizeof(errorString));
+        double timestamp = dateTimeFromString(mdP->value.s, &errorString[0], errorString.size());
 
         if (timestamp < 0)
         {
-          *detailP = errorString;
+          std::strcpy(*detailP, errorString.c_str());
           return false;
         }
         else

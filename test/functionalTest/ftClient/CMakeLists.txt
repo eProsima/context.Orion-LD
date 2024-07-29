@@ -81,7 +81,7 @@ SET (STATIC_LIBS
 )
 
 SET (DYNAMIC_LIBS
-  fastrtps.so
+  fastdds.so
   fastcdr.so
   foonathan_memory-0.7.3.so
   tinyxml2.so

@@ -62,7 +62,7 @@ extern "C"
 
 #include "orionld/common/orionldState.h"                    // orionldState
 #include "orionld/common/traceLevels.h"                     // Trace Levels
-#include "orionld/dds/NgsildEntityPubSubTypes.h"            // DDS stuff ...
+#include "orionld/dds/NgsildEntityPubSubTypes.hpp"          // DDS stuff ...
 #include "orionld/dds/DdsNotificationReceiver.h"            // DdsNotificationReceiver
 #include "orionld/dds/config.h"                             // DDS_RELIABLE, ...
 
@@ -92,7 +92,7 @@ class NgsildSubscriber
     , subscriber_(nullptr)
     , reader_(nullptr)
     , topic_(nullptr)
-    , type_(new NgsildEntityPubSubType(topicType))
+    , type_(new NgsildEntityPubSubType())
     , listener_(callback)
   {
   }

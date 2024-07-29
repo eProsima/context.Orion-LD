@@ -230,12 +230,12 @@ bool NgsildPublisher::publish(const char* entityType, const char* entityId, KjNo
   }
 
 #ifdef DDS_RELIABLE
-  eprosima::fastrtps::Duration_t    duration(0, 10000000);  // 0.01 seconds
-  ReturnCode_t  r = writer_->wait_for_acknowledgments(duration);
+  eprosima::fastdds::Duration_t    duration(0, 10000000);  // 0.01 seconds
+  eprosima::fastdds::dds::ReturnCode_t  r = writer_->wait_for_acknowledgments(duration);
 
-  if (r == ReturnCode_t::RETCODE_OK)
+  if (r == eprosima::fastdds::dds::RETCODE_OK)
     KT_V("writer has successfully published an entity");
-  else if  (r == ReturnCode_t::RETCODE_TIMEOUT)
+  else if  (r == eprosima::fastdds::dds::RETCODE_TIMEOUT)
     KT_W("wait_for_acknowledgments timed out (10 milliseconds)");
   else
     KT_E("wait_for_acknowledgments failed with error %d", r);

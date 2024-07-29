@@ -137,6 +137,8 @@ extern "C"
 #include "orionld/distOp/distOpInit.h"                        // distOpInit
 #include "orionld/dds/ddsInit.h"                              // ddsInit
 
+#include "orionld/dds/ddsModule/ddshelper/include/dds_helper_runner.hpp" // ddsModule
+
 #include "orionld/version.h"
 #include "orionld/orionRestServices.h"
 #include "orionld/orionldRestServices.h"
@@ -1428,7 +1430,10 @@ int main(int argC, char* argV[])
     pernotLoopStart();
 
   if (ddsSupport == true)
+  {
     ddsInit(kjsonP, ddsConfigFile, ddsTopicType, ddsSubsTopics, DDSOpModeDefault);
+    eprosima::ddshelper::init_dds_helper();
+  }
 
   if (socketService == true)
   {
