@@ -148,11 +148,16 @@ void HelperConfiguration::load_helper_configuration_(
         const Yaml& yml,
         const YamlReaderVersion& version)
 {
-    /////
     // Get optional only_with_type
     if (YamlReader::is_tag_present(yml, HELPER_ONLY_WITH_TYPE_TAG))
     {
         only_with_type = YamlReader::get<bool>(yml, HELPER_ONLY_WITH_TYPE_TAG, version);
+    }
+
+    // Get event window
+    if (YamlReader::is_tag_present(yml, HELPER_EVENT_WINDOW_TAG))
+    {
+        event_window = YamlReader::get_positive_int(yml, HELPER_EVENT_WINDOW_TAG);
     }
 }
 
@@ -164,14 +169,6 @@ void HelperConfiguration::load_specs_configuration_(
     if (YamlReader::is_tag_present(yml, NUMBER_THREADS_TAG))
     {
         n_threads = YamlReader::get_positive_int(yml, NUMBER_THREADS_TAG);
-    }
-
-    /////
-    // Get optional Topic QoS
-    if (YamlReader::is_tag_present(yml, SPECS_QOS_TAG))
-    {
-        YamlReader::fill<TopicQoS>(topic_qos, YamlReader::get_value_in_tag(yml, SPECS_QOS_TAG), version);
-        TopicQoS::default_topic_qos.set_value(topic_qos);
     }
 
     // Get max pending samples

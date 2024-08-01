@@ -29,6 +29,17 @@ namespace eprosima {
 namespace ddshelper {
 namespace participants {
 
+void log_to_file(const std::string& logMessage)
+{
+    std::ofstream logFile("/tmp/DDSHelperLogConsumer.txt", std::ios_base::app); // Use an absolute path
+    if (logFile.is_open())
+    {
+        logFile << logMessage << std::endl;
+        logFile.close();
+    }
+}
+
+
 DDSHelperLogConsumer::DDSHelperLogConsumer(
         const ddspipe::core::DdsPipeLogConfiguration* configuration)
     : utils::BaseLogConsumer(configuration)
@@ -44,6 +55,7 @@ void DDSHelperLogConsumer::Consume(
     }
 
     //CALLBACK FOR CB
+    log_to_file(entry.timestamp + ": " + entry.message);
 }
 
 } /* namespace participants */

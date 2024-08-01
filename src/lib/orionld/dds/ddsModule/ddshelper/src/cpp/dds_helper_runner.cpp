@@ -39,8 +39,7 @@ std::unique_ptr<eprosima::utils::event::FileWatcherHandler> create_filewatcher(
             [&helper, &file_path]
                 (std::string file_name)
             {
-                logUser(
-                    DDSHELPER_EXECUTION,
+                logInfo(DDSHELPER_EXECUTION,
                     "FileWatcher notified changes in file " << file_name << ". Reloading configuration");
 
                 try
@@ -70,9 +69,7 @@ std::unique_ptr<eprosima::utils::event::PeriodicEventHandler> create_periodic_ha
             [&helper, &file_path]
                 ()
             {
-                logUser(
-                    DDSHELPER_EXECUTION,
-                    "Periodic Timer raised. Reloading configuration from file " << file_path << ".");
+                logInfo(DDSHELPER_EXECUTION, "Periodic Timer raised. Reloading configuration from file " << file_path << ".");
 
                 try
                 {
@@ -93,7 +90,7 @@ std::unique_ptr<eprosima::utils::event::PeriodicEventHandler> create_periodic_ha
 
 int init_dds_helper()
 {
-    logUser(DDSHELPER_EXECUTION, "Starting DDS Helper execution.");
+    logInfo(DDSHELPER_EXECUTION, "Starting DDS Helper execution.");
 
     // Encapsulating execution in block to erase all memory correctly before closing process
     try
@@ -116,22 +113,17 @@ int init_dds_helper()
             eprosima::utils::Log::ClearConsumers();
             eprosima::utils::Log::SetVerbosity(log_configuration.verbosity);
 
+            // DDS Helper Log Consumer
+            eprosima::utils::Log::RegisterConsumer(
+                std::make_unique<eprosima::ddshelper::participants::DDSHelperLogConsumer>(&log_configuration));
+
+
             // Std Log Consumer
             if (log_configuration.stdout_enable)
             {
                 eprosima::utils::Log::RegisterConsumer(
                     std::make_unique<eprosima::utils::StdLogConsumer>(&log_configuration));
             }
-
-            // DDS Helper Log Consumer
-            eprosima::utils::Log::RegisterConsumer(
-                std::make_unique<eprosima::ddshelper::participants::DDSHelperLogConsumer>(&log_configuration));
-
-
-            std::string ddsLogFile = "/tmp/DDSHelperLogFile.log";
-            std::unique_ptr<eprosima::fastdds::dds::FileConsumer> append_file_consumer(
-                new eprosima::fastdds::dds::FileConsumer(ddsLogFile, true));
-            eprosima::utils::Log::RegisterConsumer(std::move(append_file_consumer));
         }
 
         // DDS Helper Initialization
@@ -142,7 +134,7 @@ int init_dds_helper()
         // Start recording right away
         auto helper = std::make_unique<DDSHelper>(configuration, close_handler);
 
-        logUser(DDSHELPER_EXECUTION, "DDS Helper running.");
+        logInfo(DDSHELPER_EXECUTION, "DDS Helper running.");
 
         // // Create File Watcher Handler
         // std::unique_ptr<eprosima::utils::event::FileWatcherHandler> file_watcher_handler;
@@ -155,9 +147,9 @@ int init_dds_helper()
         // Wait until signal arrives
         close_handler->wait_for_event();
 
-        logUser(DDSHELPER_EXECUTION, "Stopping DDS Helper.");
+        logInfo(DDSHELPER_EXECUTION, "Stopping DDS Helper.");
 
-        logUser(DDSHELPER_EXECUTION, "DDS Helper stopped correctly.");
+        logInfo(DDSHELPER_EXECUTION, "DDS Helper stopped correctly.");
     }
     catch (const eprosima::utils::ConfigurationException& e)
     {
@@ -173,7 +165,7 @@ int init_dds_helper()
         return -1;
     }
 
-    logUser(DDSHELPER_EXECUTION, "Finishing DDS Helper execution correctly.");
+    logInfo(DDSHELPER_EXECUTION, "Finishing DDS Helper execution correctly.");
 
     // Force print every log before closing
     eprosima::utils::Log::Flush();

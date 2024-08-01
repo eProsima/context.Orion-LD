@@ -36,9 +36,9 @@ namespace participants {
 class DDSHELPER_PARTICIPANTS_DllAPI CBWriter
 {
 public:
+    logInfo(DDSHELPER_EXECUTION, "DDSHelper::DDSHelper.");
 
     CBWriter() = default;
-
     ~CBWriter() = default;
 
     /**

@@ -1,3 +1,8 @@
+
+# DDS Helper configuration
+helper:
+  only-with-type: false
+
 # DDS configuration
 dds:
   # Domain ID
@@ -10,3 +15,10 @@ dds:
   # Blocked topics
   blocklist:
     - name: "add_blocked_topics_list_here"
+
+specs:
+  threads: 12
+  max-pending-samples: 20
+  logging:
+    stdout: false
+    verbosity: info
