@@ -78,4 +78,3 @@ int ddsEntityCreateFromAttribute(KjNode* attrNodeP, const char* entityId, const 
 
   return orionldPostEntities();
 }
-
