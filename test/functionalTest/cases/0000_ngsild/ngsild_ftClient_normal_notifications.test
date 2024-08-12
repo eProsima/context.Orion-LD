@@ -116,7 +116,7 @@ Date: REGEX(.*)
 POST /notify?subscriptionId=urn:S1
 Content-Length: 238
 Content-Type: application/json
-User-Agent: orionld/post-v1.5.1
+User-Agent: orionld/REGEX(.*)
 Host: REGEX(.*)
 Accept: application/json
 Ngsild-Attribute-Format: Normalized

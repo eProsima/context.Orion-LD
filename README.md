@@ -6,27 +6,27 @@
 [![Support badge](https://img.shields.io/badge/support-sof-yellowgreen.svg)](http://stackoverflow.com/questions/tagged/fiware-orion)
 [![NGSI-LD badge](https://img.shields.io/badge/NGSI-LD-red.svg)](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf)
 <br>
-[![Documentation badge](https://readthedocs.org/projects/fiware-orion/badge/?version=latest)](http://fiware-orion-ld.readthedocs.io/en/latest/?badge=latest)
+[![Documentation badge](https://readthedocs.org/projects/fiware-orion/badge/?version=latest)](http://fiware-orion.readthedocs.io/en/latest/?badge=latest)
 ![Status](https://nexus.lab.fiware.org/static/badges/statuses/incubating.svg)
 [![Coverage Status](https://coveralls.io/repos/github/FIWARE/context.Orion-LD/badge.svg?branch=develop)](https://coveralls.io/github/FIWARE/context.Orion-LD?branch=develop)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4800/badge)](https://bestpractices.coreinfrastructure.org/projects/4800)
 
 This project is part of [FIWARE](https://www.fiware.org/). For more information check the FIWARE Catalogue entry for
-[Core Context](https://github.com/Fiware/catalogue/tree/master/core).
+[FIWARE Core Context Management](https://github.com/Fiware/catalogue/tree/master/core).
 
 Issues on this projects can be reported as [github issues](https://github.com/FIWARE/context.Orion-LD/issues),
-while questions are preferred on Stackoverflow, using the tag `fiware-orion`.
+while questions are preferred on [Stack Overflow](http://stackoverflow.com/questions/tagged/fiware-orion), using the tag `fiware-orion`.
 
-> The latest release of Orion-LD is [1.5.1](https://github.com/FIWARE/context.Orion-LD/releases/tag/1.5.1) from January 2024
+> The latest release of Orion-LD is [1.6.0](https://github.com/FIWARE/context.Orion-LD/releases/tag/1.6.0) from July 2024
 
 Orion-LD is a Context Broker and [CEF](https://ec.europa.eu/digital-building-blocks/sites/display/DIGITAL/About+us)
 [building block](https://joinup.ec.europa.eu/collection/egovernment/solution/cef-context-broker) for context data
-management which supports both the [NGSI-LD](https://en.wikipedia.org/wiki/NGSI-LD) and the
-[NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) APIs. It is currently a fork of the original
+management, implementting both the [NGSI-LD API](https://en.wikipedia.org/wiki/NGSI-LD) and the
+[NGSIv2 API](https://fiware.github.io/specifications/OpenAPI/ngsiv2). It is currently a fork of the original
 [Orion Context Broker](https://github.com/telefonicaid/fiware-orion) extending support to add **NGSI-LD** and linked
 data concepts. Orion-LD follows the [ETSI](https://en.wikipedia.org/wiki/ETSI) specification for **NGSI-LD** and has
 been tested to be a stable and fast **NGSI-LD** broker with near compliance to the version 1.6.1 of the NGSI-LD API
-specification.
+specification (and some features from newer releases).
 
 
 ## License
@@ -54,7 +54,7 @@ wish to make a clarifying public statement as follows:
 
 ## Contribution to Orion-LD
 Anyone wishing to contribute to Orion-LD, be it fixing/adding documentation, tests, source code, all types of contributions are welcome.
-For source code contributions, please see the [Contribution guidelines](doc/manuals/devel/contribution_guidelines.md).
+For source code contributions, please see the [Contribution guidelines](doc/manuals/contribution_guidelines.md).
 
 
 ## General Information on NGSI-LD
@@ -62,25 +62,29 @@ For source code contributions, please see the [Contribution guidelines](doc/manu
 Its payloads are encoded as [linked data](https://en.wikipedia.org/wiki/Linked_data) using JSON.
 
 The NGSI-LD Specification is regularly updated and published by ETSI.
-The latest specification is [version 1.8.1](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf)
-and it was published in March 2024.
+The latest specification is [version 1.8.1](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf), published in March 2024.
+The next release, version 1.9.1, is expected for September/October 2024·
 
-This presentation from the FIWARE Summit in Malaga 2018 might be of interest:
-https://www.slideshare.net/FI-WARE/fiware-global-summit-ngsild-ngsi-with-linked-data
+A few presentations on NGSI-LD:
+* [NGSI-LD Overview](https://docs.google.com/presentation/d/1tgh6gBdcZHRPU_ehM7M5rGCI83CrYimCwJXxzRI5GDg)
+* [NGSI-LD in 30 min](https://docs.google.com/presentation/d/1z1IzikB7NxIkihDosV4KrtNS_IJUdrNiwC_b4wAI0rc)
+* [NGSI-LD in a Nutshell](https://docs.google.com/presentation/d/14aoHGYzmfn_a31ByG_Tf8pejuP6oWhjqhraLsPtRp_k)
 
-Examples of **NGSI-LD** can be found in [ETSI](https://forge.etsi.org/gitlab/NGSI-LD/NGSI-LD/tree/master/examples).
-See also the [OpenAPI Specification of NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/-/raw/master/spec/updated/generated/full_api.json)
+Examples of **NGSI-LD** payloads can be found in [ETSI](https://forge.etsi.org/gitlab/NGSI-LD/NGSI-LD/tree/master/examples).
+See also the [OpenAPI Specification of NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/cim/ngsi-ld-openapi/-/raw/1.7.1/ngsi-ld-api.yaml).  
+That is for version 1.7.1 of the NGSI-LD API specification.  
+We're currently working on updating this to v1.8.1, ETA: Dec 2024.
 
 If you are not sharing your data across systems and have no need for linked data concepts, then the current stable
 version of **NGSI** (**NGSI-v2**) is more than sufficient.
-If so, please use the original unforked [Orion](https://github.com/telefonicaid/fiware-orion) instead of Orion-LD (note that Orion-LD is **not** up-to-date with Orion in terms of NGSI v2).
+If so, please use the original [Orion](https://github.com/telefonicaid/fiware-orion) instead of Orion-LD (note that Orion-LD is **not** up-to-date with Orion in terms of NGSI v2).
 
-
-## NGSI-LD Context Broker Feature Comparison
-An Excel file detailing the current compatibility of the development version of the Orion-LD Context Broker against the features of v1.6.1 of the API specification can be downloaded [here](https://docs.google.com/spreadsheets/d/18tq0_PZFl5WCfYUElcdI6M3Vlin4hP-M).
 
 | :books: [Documentation](https://github.com/FIWARE/context.Orion-LD/tree/develop/doc/manuals-ld) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/core/orion-ld) | <img style="height:1em" src="https://quay.io/static/img/quay_favicon.png"/> [quay.io](https://quay.io/repository/fiware/orion-ld) |
 | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+
+## NGSI-LD Context Broker Feature Comparison
+An Excel file detailing the current compatibility of the development version of the Orion-LD Context Broker against the features (up to v1.8.1) of the API specification can be downloaded [here](https://docs.google.com/spreadsheets/d/18tq0_PZFl5WCfYUElcdI6M3Vlin4hP-M).
 
 
 ## Test and Deployment of Orion-LD
@@ -88,39 +92,39 @@ If you want to start testing Orion-LD, the most common option is to use Docker.
 There are a number of docker images to choose from.
 
 If you (at your own risk) want to evaluate the bleeding edge development changes, you can use the latest image:
-`docker run fiware/orion-ld:latest` or even better: use
+`docker run fiware/orion-ld:latest` or better: use
 [docker compose](https://github.com/FIWARE/context.Orion-LD/blob/develop/docker/docker-compose.yml) to run it.
 
-The use of the "latest" tag is not recommended, as it keeps changing.
-Much better would be to use the newest non-changing tag and stick to it until you have need for some newer feature/fix and then change to a newer non-changing tag.
-Every merged pull request results in a new non-changing tag in dockerhub.
+The use of the "latest" tag is NOT RECOMMENDED, as it keeps changing. Please don't use it. It's solely meant for internal testing.
+The recommendation is to use the newest fixed tag you find and stick to it until you have need for some newer feature/fix and then change to that newer fixed tag.
+Every merged pull request results in a new fixed tag in dockerhub/quay.io.
 
 Please note that for production and/or performance implementations, there is a thorough guide for that right [here](https://github.com/FIWARE/load-tests)
 
-If you instead want to use a more stable image, the latest release (as of January 2024) is
-[1.5.1](https://github.com/FIWARE/context.Orion-LD/releases/tag/1.5.1)
+If you want to use a more stable image, the latest release (as of July 2024) is
+[1.6.0](https://github.com/FIWARE/context.Orion-LD/releases/tag/1.6.0)
 
 ```console
-docker run quay.io/fiware/orion-ld:1.5.1
+docker run quay.io/fiware/orion-ld:1.6.0
 ```
 
-Please check [quay.io](https://quay.io/repository/fiware/orion-ld?tab=tags) for other releases.
+Please check [quay.io](https://quay.io/repository/fiware/orion-ld?tab=tags) or [dockerhub](https://hub.docker.com/r/fiware/orion-ld/tags) for other releases.
 
 ## Documentation:
 -   [Guide to NGSI-LD entities and attributes](doc/manuals-ld/entities-and-attributes.md)
--   [Guide to the context](doc/manuals-ld/the-context.md)
+-   [Guide to the JSON-LD @context](doc/manuals-ld/the-context.md)
 -   [Installation Guide](doc/manuals-ld/installation-guide.md)
 -   [Quick Start Guide](doc/manuals-ld/quick-start-guide.md)
 -   [External Libraries](doc/manuals-ld/external-libraries.md)
 -   [Temporal Representation](doc/manuals-ld/troe.md)
 -   [The Broker as Context Server](doc/manuals-ld/contextServer.md)
--   [State of the Implementation](doc/manuals-ld/implementationState.md)
--   [Roadmap](roadmap.md)
--   [Planning - Issue #280](https://github.com/FIWARE/context.Orion-LD/issues/280)
+-   [Roadmap](doc/roadmap.md)
 
 A Test Suite for NGSI-LD compliant brokers can be found [here](https://github.com/fiware/NGSI-LD_Tests).
-This test suite is kind of deprecated in favor of the [ETSI NGSI-LD API Conformance Test Suite](https://forge.etsi.org/rep/cim/ngsi-ld-test-suite).
-However, the ETSI test suite still needs quite some work to be usable.
-A TTF (Testing Task force) is applied for (ETSI fundings) and hopefully the test suite will be improved upon during 2023.
+This test suite is deprecated in favor of the newer [ETSI NGSI-LD API Conformance Test Suite](https://forge.etsi.org/rep/cim/ngsi-ld-test-suite).
+(Orion-LD passes about 95% of the test cases of this older deprecated test suite.)
 
-Orion-LD passes about 95% of the test cases of the older deprecated test suite, while ETSI's test suite isn't really usable at the moment.
+About the ETSI funded conformance test suite, a third TTF (Testing Task force) is currently in progress, to improve on overall coverage and to
+aggregate conformance tests for distributed operations.
+This third TTF is expected to finish in February 2025 and by then, the ETSI NGSI-LD conformance test suite should be fully operational,
+and thus test results for Orion-LD can and will be published.
