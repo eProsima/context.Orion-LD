@@ -27,16 +27,15 @@
 #include <ddspipe_core/types/topic/dds/DdsTopic.hpp>
 
 #include <ddshelper_participants/library/library_dll.h>
-#include <ddshelper_participants/helper_participants/cb_participants/CBMessage.hpp>
+#include <CBMessage.hpp>
 
 namespace eprosima {
 namespace ddshelper {
 namespace participants {
 
-class DDSHELPER_PARTICIPANTS_DllAPI CBWriter
+class CBWriter
 {
 public:
-    logInfo(DDSHELPER_EXECUTION, "DDSHelper::DDSHelper.");
 
     CBWriter() = default;
     ~CBWriter() = default;
@@ -47,7 +46,7 @@ public:
      * @param [in] msg Pointer to the data to be written.
      * @param [in] dyn_type DynamicType containing the type information required.
      */
-    void write_data(
+    virtual void write_data(
             const CBMessage& msg,
             const fastdds::dds::DynamicType::_ref_type& dyn_type);
 
@@ -59,7 +58,7 @@ protected:
      * @param [in] msg Pointer to the data.
      * @param [in] dyn_type DynamicType containing the type information required.
      */
-    void write_schema(
+    virtual void write_schema(
             const CBMessage& msg,
             const fastdds::dds::DynamicType::_ref_type& dyn_type);
 

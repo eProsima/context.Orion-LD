@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file YamlReaderConfiguration.cpp
+ * @file HelperConfiguration.cpp
  *
  */
 
@@ -30,8 +30,8 @@
 #include <ddspipe_yaml/Yaml.hpp>
 #include <ddspipe_yaml/YamlManager.hpp>
 
-#include <ddshelper_yaml/yaml_configuration_tags.hpp>
-#include <ddshelper_yaml/YamlReaderConfiguration.hpp>
+#include <yaml_configuration_tags.hpp>
+#include <HelperConfiguration.hpp>
 
 namespace eprosima {
 namespace ddshelper {
@@ -206,16 +206,14 @@ void HelperConfiguration::load_dds_configuration_(
     // Get optional whitelist interfaces
     if (YamlReader::is_tag_present(yml, WHITELIST_INTERFACES_TAG))
     {
-        simple_configuration->whitelist = YamlReader::get_set<IpType>(yml, WHITELIST_INTERFACES_TAG,
-                        version);
+        simple_configuration->whitelist = YamlReader::get_set<IpType>(yml, WHITELIST_INTERFACES_TAG, version);
     }
 
     // Optional get Transport protocol
     if (YamlReader::is_tag_present(yml, TRANSPORT_DESCRIPTORS_TRANSPORT_TAG))
     {
         simple_configuration->transport = YamlReader::get<TransportDescriptors>(yml,
-                        TRANSPORT_DESCRIPTORS_TRANSPORT_TAG,
-                        version);
+                        TRANSPORT_DESCRIPTORS_TRANSPORT_TAG, version);
     }
     else
     {
@@ -226,8 +224,7 @@ void HelperConfiguration::load_dds_configuration_(
     if (YamlReader::is_tag_present(yml, IGNORE_PARTICIPANT_FLAGS_TAG))
     {
         simple_configuration->ignore_participant_flags = YamlReader::get<IgnoreParticipantFlags>(yml,
-                        IGNORE_PARTICIPANT_FLAGS_TAG,
-                        version);
+                        IGNORE_PARTICIPANT_FLAGS_TAG, version);
     }
     else
     {
@@ -255,8 +252,7 @@ void HelperConfiguration::load_dds_configuration_(
     if (YamlReader::is_tag_present(yml, TOPICS_TAG))
     {
         const auto& manual_topics = YamlReader::get_list<ManualTopic>(yml, TOPICS_TAG, version);
-        ddspipe_configuration.manual_topics =
-                std::vector<ManualTopic>(manual_topics.begin(), manual_topics.end());
+        ddspipe_configuration.manual_topics = std::vector<ManualTopic>(manual_topics.begin(), manual_topics.end());
     }
 
     /////

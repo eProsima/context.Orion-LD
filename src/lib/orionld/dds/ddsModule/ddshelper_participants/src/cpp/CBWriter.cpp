@@ -27,14 +27,15 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/utils.hpp>
 
-#include <ddshelper_participants/helper_participants/cb_participants/CBWriter.hpp>
+#include <CBWriter.hpp>
 
 namespace eprosima {
 namespace ddshelper {
 namespace participants {
 
 
-void logToFile(const std::string& logMessage)
+void logToFile(
+        const std::string& logMessage)
 {
     std::ofstream logFile("/home/adrian/CBWriterlog.txt", std::ios_base::app); // Use an absolute path
     if (logFile.is_open())
@@ -67,12 +68,16 @@ std::string guid_to_str(
     return str;
 }
 
-std::vector<std::string> split_attributes(const std::string& input) {
+std::vector<std::string> split_attributes(
+        const std::string& input)
+{
     std::vector<std::string> attributes;
     std::istringstream ss(input);
     std::string attribute;
-    while (std::getline(ss, attribute, '}')) {
-        if (!attribute.empty()) {
+    while (std::getline(ss, attribute, '}'))
+    {
+        if (!attribute.empty())
+        {
             attribute += "}";
             attributes.push_back(attribute);
         }
@@ -88,7 +93,8 @@ void CBWriter::write_data(
 
     write_schema(msg, dyn_type);
 
-    logInfo(DDSHELPER_CB_WRITER, "Writing message: " << utils::from_bytes(msg.dataSize) << ".");
+    logInfo(DDSHELPER_CB_WRITER,
+            "Writing message: " << utils::from_bytes(msg.dataSize) << ".");
 
     // Get the data as JSON
     fastdds::dds::DynamicData::_ref_type dym_data = get_dynamic_data_(msg, dyn_type);
@@ -109,10 +115,14 @@ void CBWriter::write_data(
     std::vector<std::string> attributes = split_attributes(ss.str());
 
     // Parse each attribute and add it to the output JSON
-    for (const auto& attribute : attributes) {
+    for (const auto& attribute : attributes)
+    {
         nlohmann::ordered_json parsed_attribute = nlohmann::json::parse(attribute);
         output[msg.topic.topic_name()]["data"]["data.instanceHandle.value"] = parsed_attribute;
     }
+
+    //STORE DATA
+    //store_data_callback(msg.topic.topic_name(), msg.topic.type_name, output);
 
     std::string logMessage = "\n---------------\n";
     logMessage = logMessage + output.dump(4);
@@ -122,21 +132,22 @@ void CBWriter::write_data(
 
 void CBWriter::write_schema(
         const CBMessage& msg,
-        const fastdds::dds::DynamicType::_ref_type& dyn_type) 
+        const fastdds::dds::DynamicType::_ref_type& dyn_type)
 {
     const std::string topic_name = msg.topic.topic_name();
-    const fastdds::dds::xtypes::TypeIdentifier type_id = msg.topic.type_ids.type_identifier1();
+    const fastdds::dds::xtypes::TypeIdentifier type_id = msg.topic.type_identifiers.type_identifier1();
     const std::string type_name = msg.topic.type_name;
 
     auto it = stored_schemas_.find(topic_name);
     if (it == stored_schemas_.end())
     {
         //Schema has not been registered
-        logInfo(DDSHELPER_CB_WRITER, "Writing schema: " << type_name << " on topic: " << topic_name << ".");
+        logInfo(DDSHELPER_CB_WRITER,
+                "Writing schema: " << type_name << " on topic: " << topic_name << ".");
 
         //STORE SCHEMA
-        //store_schema(topic_name, topic_name, type_id, serialized_type_object);
-        
+        //store_schema_callback(topic_name, type_name, type_id, serialized_type_object);
+
         //Add the schema and topic to stored_schemas_
         stored_schemas_[topic_name] = type_id;
 
@@ -144,20 +155,24 @@ void CBWriter::write_schema(
         logMessage = logMessage + "Writing schema: " + type_name + " on topic: " + topic_name;
         logMessage = logMessage + "\n---------------\n";
         logToFile(logMessage);
-    }else{
-        //logInfo(DDSHELPER_CB_WRITER, "Schema: " + type_name + " already registered for topic: " + topic_name + ".");
+    }
+    else
+    {
+        //logInfo(DDSHELPER_CB_WRITER,
+        //        "Schema: " + type_name + " already registered for topic: " + topic_name + ".");
     }
 }
 
 fastdds::dds::DynamicData::_ref_type CBWriter::get_dynamic_data_(
-                const CBMessage& msg,
-                const fastdds::dds::DynamicType::_ref_type& dyn_type) noexcept
+        const CBMessage& msg,
+        const fastdds::dds::DynamicType::_ref_type& dyn_type) noexcept
 {
     fastdds::dds::DynamicPubSubType pubsub_type(dyn_type);
-    fastdds::dds::DynamicData::_ref_type dyn_data(fastdds::dds::DynamicDataFactory::get_instance()->create_data(dyn_type));
+    fastdds::dds::DynamicData::_ref_type dyn_data(fastdds::dds::DynamicDataFactory::get_instance()->
+                    create_data(dyn_type));
 
     auto& data_no_const = const_cast<eprosima::fastdds::rtps::SerializedPayload_t&>(msg.payload);
-    pubsub_type.deserialize(&data_no_const, &dyn_data);
+    pubsub_type.deserialize(data_no_const, &dyn_data);
 
     return dyn_data;
 }

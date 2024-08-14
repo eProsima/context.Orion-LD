@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@
 #include <ddspipe_participants/participant/dynamic_types/DynTypesParticipant.hpp>
 #include <ddspipe_participants/participant/dynamic_types/SchemaParticipant.hpp>
 
-#include <ddshelper_participants/helper_participants/cb_participants/CBHandler.hpp>
-#include <ddshelper_participants/helper_participants/cb_participants/CBHandlerConfiguration.hpp>
+#include <CBHandler.hpp>
+#include <CBHandlerConfiguration.hpp>
 
-#include <ddshelper_yaml/YamlReaderConfiguration.hpp>
+#include <HelperConfiguration.hpp>
 
 namespace eprosima {
 namespace ddshelper {
@@ -55,8 +55,8 @@ public:
      * @param event_handler: Reference to event handler used for thread synchronization in main application.
      */
     DDSHelper(
-        const yaml::HelperConfiguration& configuration,
-        std::shared_ptr<eprosima::utils::event::MultipleEventHandler> event_handler);
+            const yaml::HelperConfiguration& configuration,
+            std::shared_ptr<eprosima::utils::event::MultipleEventHandler> event_handler);
 
     /**
      * Reconfigure the Helper with the new configuration.

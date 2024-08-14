@@ -13,38 +13,24 @@
 // limitations under the License.
 
 /**
- * @file CBMessage.cpp
+ * @file yaml_configuration_tags.hpp
  */
 
-#include <ddshelper_participants/helper_participants/cb_participants/CBMessage.hpp>
+#pragma once
+
+#include <set>
+#include <string>
 
 namespace eprosima {
 namespace ddshelper {
-namespace participants {
+namespace yaml {
 
-CBMessage::CBMessage(
-        const CBMessage& msg)
-{
-    payload_owner = msg.payload_owner;
-    payload_owner->get_payload(
-        msg.payload,
-        this->payload);
-    topic = msg.topic;
-    instanceHandle = msg.instanceHandle;
-    source_guid = msg.source_guid;
-    sequence_number = msg.sequence_number;
-    publish_time = msg.publish_time;
-}
+constexpr const char* HELPER_DDS_TAG("dds");
+constexpr const char* HELPER_HELPER_TAG("ddshelper");
+constexpr const char* HELPER_EVENT_WINDOW_TAG("event-window");
+constexpr const char* HELPER_ONLY_WITH_TYPE_TAG("only-with-type");
+constexpr const char* HELPER_SPECS_MAX_PENDING_SAMPLES_TAG("max-pending-samples");
 
-CBMessage::~CBMessage()
-{
-    // If payload owner exists and payload has size, release it correctly in pool
-    if (payload_owner && payload.length > 0)
-    {
-        payload_owner->release_payload(payload);
-    }
-}
-
-} /* namespace participants */
+} /* namespace yaml */
 } /* namespace ddshelper */
 } /* namespace eprosima */

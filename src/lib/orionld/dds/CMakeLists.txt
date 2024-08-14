@@ -42,7 +42,6 @@ SET (SOURCES
 # -----------------------------------------------------------------
 include_directories("${PROJECT_SOURCE_DIR}/src/lib")
 
-
 # Include ddsModule
 # -----------------------------------------------------------------
 add_subdirectory(ddsModule)

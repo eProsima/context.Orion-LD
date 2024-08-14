@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,10 +37,10 @@ std::unique_ptr<eprosima::utils::event::FileWatcherHandler> create_filewatcher(
     // WARNING: it is needed to pass file_path, as FileWatcher only retrieves file_name
     std::function<void(std::string)> filewatcher_callback =
             [&helper, &file_path]
-                (std::string file_name)
+            (std::string file_name)
             {
                 logInfo(DDSHELPER_EXECUTION,
-                    "FileWatcher notified changes in file " << file_name << ". Reloading configuration");
+                        "FileWatcher notified changes in file " << file_name << ". Reloading configuration");
 
                 try
                 {
@@ -50,8 +50,7 @@ std::unique_ptr<eprosima::utils::event::FileWatcherHandler> create_filewatcher(
                 catch (const std::exception& e)
                 {
                     logWarning(DDSHELPER_EXECUTION,
-                            "Error reloading configuration file " << file_name << " with error: " <<
-                            e.what());
+                            "Error reloading configuration file " << file_name << " with error: " << e.what());
                 }
             };
 
@@ -67,9 +66,10 @@ std::unique_ptr<eprosima::utils::event::PeriodicEventHandler> create_periodic_ha
     // Callback will reload configuration and pass it to DdsPipe
     std::function<void()> periodic_callback =
             [&helper, &file_path]
-                ()
+            ()
             {
-                logInfo(DDSHELPER_EXECUTION, "Periodic Timer raised. Reloading configuration from file " << file_path << ".");
+                logInfo(DDSHELPER_EXECUTION,
+                        "Periodic Timer raised. Reloading configuration from file " << file_path << ".");
 
                 try
                 {
@@ -79,8 +79,7 @@ std::unique_ptr<eprosima::utils::event::PeriodicEventHandler> create_periodic_ha
                 catch (const std::exception& e)
                 {
                     logWarning(DDSHELPER_EXECUTION,
-                            "Error reloading configuration file " << file_path << " with error: " <<
-                            e.what());
+                            "Error reloading configuration file " << file_path << " with error: " << e.what());
                 }
             };
 
@@ -90,14 +89,15 @@ std::unique_ptr<eprosima::utils::event::PeriodicEventHandler> create_periodic_ha
 
 int init_dds_helper()
 {
-    logInfo(DDSHELPER_EXECUTION, "Starting DDS Helper execution.");
+    logInfo(DDSHELPER_EXECUTION,
+            "Starting DDS Helper execution.");
 
     // Encapsulating execution in block to erase all memory correctly before closing process
     try
     {
         // Load configuration from YAML
-        eprosima::ddshelper::yaml::HelperConfiguration configuration(DEFAULT_CONFIGURATION_FILE_NAME);
-        
+        eprosima::ddshelper::yaml::HelperConfiguration configuration(yaml::DEFAULT_CONFIGURATION_FILE_NAME);
+
         // Verify that the configuration is correct
         eprosima::utils::Formatter error_msg;
         if (!configuration.is_valid(error_msg))
@@ -134,27 +134,30 @@ int init_dds_helper()
         // Start recording right away
         auto helper = std::make_unique<DDSHelper>(configuration, close_handler);
 
-        logInfo(DDSHELPER_EXECUTION, "DDS Helper running.");
+        logInfo(DDSHELPER_EXECUTION,
+                "DDS Helper running.");
 
         // // Create File Watcher Handler
         // std::unique_ptr<eprosima::utils::event::FileWatcherHandler> file_watcher_handler;
-        // file_watcher_handler = create_filewatcher(helper, DEFAULT_CONFIGURATION_FILE_NAME);
+        // file_watcher_handler = create_filewatcher(helper, yaml::DEFAULT_CONFIGURATION_FILE_NAME);
 
         // // Create Periodic Handler
         // std::unique_ptr<eprosima::utils::event::PeriodicEventHandler> periodic_handler;
-        // periodic_handler = create_periodic_handler(helper, DEFAULT_CONFIGURATION_FILE_NAME, 10);
+        // periodic_handler = create_periodic_handler(helper, yaml::DEFAULT_CONFIGURATION_FILE_NAME, 10);
 
         // Wait until signal arrives
         close_handler->wait_for_event();
 
-        logInfo(DDSHELPER_EXECUTION, "Stopping DDS Helper.");
+        logInfo(DDSHELPER_EXECUTION,
+                "Stopping DDS Helper.");
 
-        logInfo(DDSHELPER_EXECUTION, "DDS Helper stopped correctly.");
+        logInfo(DDSHELPER_EXECUTION,
+                "DDS Helper stopped correctly.");
     }
     catch (const eprosima::utils::ConfigurationException& e)
     {
         logError(DDSHELPER_ERROR,
-                "Error Loading DDS Helper Configuration from file " << DEFAULT_CONFIGURATION_FILE_NAME <<
+                "Error Loading DDS Helper Configuration from file " << yaml::DEFAULT_CONFIGURATION_FILE_NAME <<
                 ". Error message:\n " << e.what());
         return -1;
     }
@@ -165,7 +168,8 @@ int init_dds_helper()
         return -1;
     }
 
-    logInfo(DDSHELPER_EXECUTION, "Finishing DDS Helper execution correctly.");
+    logInfo(DDSHELPER_EXECUTION,
+            "Finishing DDS Helper execution correctly.");
 
     // Force print every log before closing
     eprosima::utils::Log::Flush();

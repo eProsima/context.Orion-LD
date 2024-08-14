@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file YamlReaderConfiguration.hpp
+ * @file HelperConfiguration.hpp
  */
 
 #pragma once
@@ -38,6 +38,13 @@
 namespace eprosima {
 namespace ddshelper {
 namespace yaml {
+
+constexpr const char* DEFAULT_CONFIGURATION_FILE_NAME("/home/adrian/DDS_HELPER_CONFIGURATION.yaml");
+
+constexpr const int DEFAULT_N_THREADS = 8;
+constexpr const bool DEFAULT_ONLY_WITH_TYPE = false;
+constexpr const int DEFAULT_EVENT_WINDOW = 20;
+constexpr const int DEFAULT_MAX_PENDING_SAMPLES = 500;// -1 <-> no limit || 0 <-> no pending samples
 
 /**
  * @brief Class that encapsulates specific methods to get a full DDS Helper Configuration from a yaml node.
@@ -64,11 +71,11 @@ public:
     std::shared_ptr<ddspipe::participants::SimpleParticipantConfiguration> simple_configuration;
     std::shared_ptr<ddspipe::participants::ParticipantConfiguration> helper_configuration;
 
-    unsigned int n_threads = 12;
+    unsigned int n_threads = DEFAULT_N_THREADS;
 
-    bool only_with_type = false;
-    unsigned int event_window = 20;
-    int max_pending_samples = 5000;  // -1 <-> no limit || 0 <-> no pending samples
+    bool only_with_type = DEFAULT_ONLY_WITH_TYPE;
+    unsigned int event_window = DEFAULT_EVENT_WINDOW;
+    int max_pending_samples = DEFAULT_MAX_PENDING_SAMPLES;
     ddspipe::core::types::TopicQoS topic_qos{};
 
 protected:

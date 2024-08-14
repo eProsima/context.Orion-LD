@@ -1,4 +1,4 @@
-# Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ set(MODULE_NAME
     ddshelper_yaml)
 
 set(MODULE_SUMMARY
-    "C++ library to create a DDS Helper/Replayer configuration from a YAML.")
+    "C++ library to create a DDS Helper configuration from a YAML.")
 
 set(MODULE_FIND_PACKAGES
     yaml-cpp

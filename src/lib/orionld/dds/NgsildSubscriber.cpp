@@ -74,7 +74,7 @@ bool NgsildSubscriber::init(const char* topicName)
   type_.register_type(participant_);
 
   // Create the subscriptions Topic
-  const char* topicType = type_->getName();
+  const char* topicType = type_->get_name().c_str();
   topic_ = participant_->create_topic(topicName, topicType, TOPIC_QOS_DEFAULT);
 
   if (topic_ == nullptr)

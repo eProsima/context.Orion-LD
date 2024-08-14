@@ -49,7 +49,9 @@ public:
             const ddspipe::core::DdsPipeLogConfiguration* configuration);
 
     DDSPIPE_CORE_DllAPI
-    ~DDSHelperLogConsumer(){};
+    ~DDSHelperLogConsumer()
+    {
+    }
 
     /**
      * @brief Implements \c LogConsumer \c Consume method.

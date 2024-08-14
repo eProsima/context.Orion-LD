@@ -23,13 +23,14 @@
 #include <cpp_utils/exception/InitializationException.hpp>
 
 #include <ddshelper_participants/common/types/logging/DDSHelperLogEntry.hpp>
-#include <ddshelper_participants/helper_participants/logging/DDSHelperLogConsumer.hpp>
+#include <DDSHelperLogConsumer.hpp>
 
 namespace eprosima {
 namespace ddshelper {
 namespace participants {
 
-void log_to_file(const std::string& logMessage)
+void log_to_file(
+        const std::string& logMessage)
 {
     std::ofstream logFile("/tmp/DDSHelperLogConsumer.txt", std::ios_base::app); // Use an absolute path
     if (logFile.is_open())
@@ -38,7 +39,6 @@ void log_to_file(const std::string& logMessage)
         logFile.close();
     }
 }
-
 
 DDSHelperLogConsumer::DDSHelperLogConsumer(
         const ddspipe::core::DdsPipeLogConfiguration* configuration)
@@ -55,6 +55,8 @@ void DDSHelperLogConsumer::Consume(
     }
 
     //CALLBACK FOR CB
+    // dds_log_callback(entry.timestamp, entry.message)
+
     log_to_file(entry.timestamp + ": " + entry.message);
 }
 

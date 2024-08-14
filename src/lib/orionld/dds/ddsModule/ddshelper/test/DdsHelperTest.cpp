@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <ddspipe_yaml/YamlReader.hpp>
+#include <cpp_utils/testing/gtest_aux.hpp>
+#include <gtest/gtest.h>
 
-#include <ddshelper_yaml/yaml_configuration_tags.hpp>
+#include "DDSHelper.hpp"
 
-namespace eprosima {
-namespace ddspipe {
-namespace yaml {
+using namespace eprosima;
 
-using namespace eprosima::ddshelper::yaml;
+TEST(DdsHelperTest, ddshelper_test1)
+{
+    ASSERT_TRUE(true);
+}
 
-} /* namespace yaml */
-} /* namespace ddspipe */
-} /* namespace eprosima */
+int main(
+        int argc,
+        char** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,8 +30,10 @@
 #include <cpp_utils/types/Fuzzy.hpp>
 #include <cpp_utils/utils.hpp>
 
-#include <ddshelper_participants/helper_participants/logging/DDSHelperLogConsumer.hpp>
-#include <ddshelper_yaml/YamlReaderConfiguration.hpp>
+#include <DDSHelperLogConsumer.hpp>
+#include <HelperConfiguration.hpp>
+
+#include <DDSHelperLogConsumer.hpp>
 
 #include "DDSHelper.hpp"
 
@@ -40,8 +42,6 @@ using namespace eprosima::ddshelper;
 
 namespace eprosima {
 namespace ddshelper {
-
-constexpr const char* DEFAULT_CONFIGURATION_FILE_NAME("/home/adrian/DDS_HELPER_CONFIGURATION.yaml");
 
 std::unique_ptr<eprosima::utils::event::FileWatcherHandler> create_filewatcher(
         const std::unique_ptr<DDSHelper>& helper,

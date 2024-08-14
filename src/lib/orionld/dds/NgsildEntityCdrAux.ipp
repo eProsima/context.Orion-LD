@@ -153,8 +153,23 @@ void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const NgsildEntity& data)
 {
+
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.id();
+
+                        scdr << data.type();
+
+                        scdr << data.scope();
+
+                        scdr << data.createdAt();
+
+                        scdr << data.modifiedAt();
+
+                        scdr << data.tenant();
+
+                        scdr << data.attributes();
+
 }
 
 

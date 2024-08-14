@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,9 +32,8 @@
 #include <cpp_utils/time/time_utils.hpp>
 #include <cpp_utils/utils.hpp>
 
-#include <ddshelper_participants/constants.hpp>
-
-#include <ddshelper_participants/helper_participants/cb_participants/CBHandler.hpp>
+#include <constants.hpp>
+#include <CBHandler.hpp>
 
 namespace eprosima {
 namespace ddshelper {
@@ -48,26 +47,32 @@ CBHandler::CBHandler(
     : configuration_(config)
     , payload_pool_(payload_pool)
 {
-    logInfo(DDSHELPER_CB_HANDLER, "Creating CB handler instance.");
-        
+    logInfo(DDSHELPER_CB_HANDLER,
+            "Creating CB handler instance.");
+
+    cb_writer_ = std::make_unique<CBWriter>();
+
     periodic_cleanup_running_ = true;
     periodic_cleanup_thread_ = std::thread(&CBHandler::remove_outdated_samples, this);
 }
 
 CBHandler::~CBHandler()
 {
-    logInfo(DDSHELPER_CB_HANDLER, "Destroying CB handler.");
+    logInfo(DDSHELPER_CB_HANDLER,
+            "Destroying CB handler.");
 
-    periodic_cleanup_running_ = false;
-    if (periodic_cleanup_thread_.joinable())
+    if (periodic_cleanup_running_)
     {
-        periodic_cleanup_thread_.join();
+        periodic_cleanup_running_ = false;
+        if (periodic_cleanup_thread_.joinable())
+        {
+            periodic_cleanup_thread_.join(); // Wait for the thread to finish
+        }
     }
 }
 
 void CBHandler::add_schema(
         const fastdds::dds::DynamicType::_ref_type& dyn_type,
-        const std::string& type_name,
         const fastdds::dds::xtypes::TypeIdentifier& type_id)
 {
     std::lock_guard<std::mutex> lock(mtx_);
@@ -78,20 +83,21 @@ void CBHandler::add_schema(
 
     // Check if it exists already
     auto it = schemas_.find(type_id);
-    if (it == schemas_.end())
+    if (it != schemas_.end())
     {
         return;
     }
 
     // Add to schemas map
-    logInfo(DDSHELPER_CB_HANDLER, "Adding schema with name " << dyn_type->get_name().to_string() << " :\n" << data << ".");
+    logInfo(DDSHELPER_CB_HANDLER,
+            "Adding schema with name " << dyn_type->get_name().to_string() << " :\n" << data << ".");
 
     schemas_[type_id] = dyn_type;
 
     // Check if there are any pending samples for this new schema. If so, add them.
-    if (pending_samples_.find(type_name) != pending_samples_.end())
+    if (pending_samples_.find(dyn_type->get_name().to_string()) != pending_samples_.end())
     {
-        write_pending_samples(type_name, dyn_type);
+        write_pending_samples(dyn_type->get_name().to_string(), dyn_type);
     }
 }
 
@@ -101,7 +107,8 @@ void CBHandler::add_data(
 {
     std::unique_lock<std::mutex> lock(mtx_);
 
-    logInfo(DDSHELPER_CB_HANDLER, "Adding data in topic: " << topic << ".");
+    logInfo(DDSHELPER_CB_HANDLER,
+            "Adding data in topic: " << topic << ".");
 
     CBMessage msg;
     msg.sequence_number = unique_sequence_number_++;
@@ -131,7 +138,9 @@ void CBHandler::add_data(
     }
 
     fastdds::dds::DynamicType::_ref_type dyn_type;
-    auto it = schemas_.find(topic.type_ids.type_identifier1());
+    fastdds::dds::xtypes::TypeIdentifier type_id = topic.type_identifiers.type_identifier1();
+
+    auto it = schemas_.find(type_id);
     if (it != schemas_.end())
     {
         dyn_type = it->second;
@@ -148,7 +157,8 @@ void CBHandler::add_data(
         }
         else
         {
-            logInfo(DDSHELPER_CB_HANDLER, "Schema for topic " << topic << " not yet available.ss");
+            logInfo(DDSHELPER_CB_HANDLER,
+                    "Schema for topic " << topic << " not yet available.ss");
 
             // Schema not available -> add to pending
             add_pending_sample(msg, topic);
@@ -160,7 +170,7 @@ void CBHandler::write_sample(
         const CBMessage& msg,
         const fastdds::dds::DynamicType::_ref_type& dyn_type)
 {
-        cb_writer_.write_data(msg, dyn_type);
+    cb_writer_->write_data(msg, dyn_type);
 }
 
 void CBHandler::add_pending_sample(
@@ -169,7 +179,8 @@ void CBHandler::add_pending_sample(
 {
     assert(configuration_.max_pending_samples != 0);
 
-    logInfo(DDSHELPER_CB_HANDLER, "Adding pending samples for type: " << schema_name << ".");
+    logInfo(DDSHELPER_CB_HANDLER,
+            "Adding pending samples for type: " << schema_name << ".");
 
     if (configuration_.max_pending_samples > 0 &&
             pending_samples_[topic.type_name].size() == static_cast<unsigned int>(configuration_.max_pending_samples))
@@ -186,8 +197,9 @@ void CBHandler::write_pending_samples(
 {
     if (pending_samples_.find(schema_name) != pending_samples_.end())
     {
-        logInfo(DDSHELPER_CB_HANDLER, "Writing pending samples for type: " << schema_name << ".");
-    
+        logInfo(DDSHELPER_CB_HANDLER,
+                "Writing pending samples for type: " << schema_name << ".");
+
         while (!pending_samples_[schema_name].empty())
         {
             // Move samples from pending list to buffer, or write them directly to CB
@@ -206,14 +218,14 @@ void CBHandler::remove_outdated_samples()
     {
         std::this_thread::sleep_for(std::chrono::seconds(configuration_.event_window));
 
-        logInfo(DDSHELPER_CB_HANDLER, "Removing outdated samples.");
+        logInfo(DDSHELPER_CB_HANDLER,
+                "Removing outdated samples.");
 
         eprosima::ddspipe::core::types::DataTime now;
         eprosima::ddspipe::core::types::DataTime::now(now);
 
         eprosima::ddspipe::core::types::DataTime event_window;
-        event_window.from_duration_t(eprosima::fastdds::Duration_t(configuration_.event_window));
-
+        event_window.from_duration_t(eprosima::fastdds::dds::Duration_t(configuration_.event_window));
         eprosima::ddspipe::core::types::DataTime threshold = now - event_window;
 
         std::lock_guard<std::mutex> lock(mtx_);

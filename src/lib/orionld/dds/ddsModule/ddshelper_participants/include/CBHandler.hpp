@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,10 +33,10 @@
 
 #include <ddspipe_participants/participant/dynamic_types/ISchemaHandler.hpp>
 
-#include <ddshelper_participants/helper_participants/cb_participants/CBHandlerConfiguration.hpp>
-#include <ddshelper_participants/helper_participants/cb_participants/CBMessage.hpp>
-#include <ddshelper_participants/helper_participants/cb_participants/CBWriter.hpp>
-#include <ddshelper_participants/library/library_dll.h>
+#include <CBHandlerConfiguration.hpp>
+#include <CBMessage.hpp>
+#include <CBWriter.hpp>
+#include <library/library_dll.h>
 
 namespace std {
 template<>
@@ -50,6 +50,7 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifier>
                (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
                (static_cast<size_t>(k.equivalence_hash()[2]));
     }
+
 };
 
 } // std
@@ -72,9 +73,6 @@ public:
      * CBHandler constructor by required values.
      *
      * Creates CBHandler instance with given configuration, payload pool.
-     * Opens temporal CB where data is to be written.
-     *
-     * @throw InitializationException if creation fails (fail to open CB).
      *
      * @param config:       Structure encapsulating all configuration options.
      * @param payload_pool: Owner of every payload contained in received messages.
@@ -95,11 +93,11 @@ public:
      * Any samples following this schema that were received before the schema itself are moved to the memory buffer.
      *
      * @param [in] dyn_type DynamicType containing the type information required to generate the schema.
+     * @param [in] type_id TypeIdentifier of the type.
      */
     DDSHELPER_PARTICIPANTS_DllAPI
     void add_schema(
             const fastdds::dds::DynamicType::_ref_type& dyn_type,
-            const std::string& type_name,
             const fastdds::dds::xtypes::TypeIdentifier& type_id) override;
 
     /**
@@ -161,14 +159,15 @@ protected:
     std::shared_ptr<ddspipe::core::PayloadPool> payload_pool_;
 
     //! CB writer
-    CBWriter cb_writer_;
+    //CBWriter cb_writer_;
+    std::unique_ptr<CBWriter> cb_writer_;
 
     //! Schemas map
     std::unordered_map<fastdds::dds::xtypes::TypeIdentifier, fastdds::dds::DynamicType::_ref_type> schemas_;
 
     //! Structure where messages with unknown type are kept
     std::map<std::string, std::list<std::pair<ddspipe::core::types::DdsTopic, CBMessage>>> pending_samples_;
-    
+
     //! Unique sequence number assigned to received messages. It is incremented with every sample added
     unsigned int unique_sequence_number_{0};
 

@@ -18,8 +18,6 @@ It provides methods:
 // LOAD DDS HELPER CONFIGURATION FROM FILE
 eprosima::ddshelper::yaml::HelperConfiguration configuration("configuration.yaml");
 
-// LOAD DDS REPLAYER CONFIGURATION FROM FILE
-eprosima::ddshelper::yaml::ReplayerConfiguration configuration("configuration.yaml");
 ```
 
 ---

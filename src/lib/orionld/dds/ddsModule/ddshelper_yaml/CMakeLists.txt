@@ -1,4 +1,4 @@
-# Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,6 +64,19 @@ configure_project_cpp()
 compile_library(
     "${PROJECT_SOURCE_DIR}/src/cpp" # Source directory
     "${PROJECT_SOURCE_DIR}/include" # Include directory
+)
+
+###############################################################################
+# Test
+###############################################################################
+# Compile tests if CMake options requires it
+
+if(BUILD_TESTING)
+    set(BUILD_LIBRARY_TESTS ON)
+endif()
+
+compile_test_library(
+    "${PROJECT_SOURCE_DIR}/test" # Test directory
 )
 
 ###############################################################################

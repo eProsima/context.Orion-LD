@@ -100,7 +100,7 @@ bool NgsildPublisher::init(const char* topicName)
   type_.register_type(participant_);
 
   // Create the publications Topic
-  const char* topicType = type_->getName();
+  const char* topicType = type_->get_name().c_str();
   KT_V("creating topic (type: '%s') '%s'", topicType, topicName);
   topic_ = participant_->create_topic(topicName, topicType, TOPIC_QOS_DEFAULT);
 
@@ -230,7 +230,7 @@ bool NgsildPublisher::publish(const char* entityType, const char* entityId, KjNo
   }
 
 #ifdef DDS_RELIABLE
-  eprosima::fastdds::Duration_t    duration(0, 10000000);  // 0.01 seconds
+  eprosima::fastdds::dds::Duration_t    duration(0, 10000000);  // 0.01 seconds
   eprosima::fastdds::dds::ReturnCode_t  r = writer_->wait_for_acknowledgments(duration);
 
   if (r == eprosima::fastdds::dds::RETCODE_OK)
