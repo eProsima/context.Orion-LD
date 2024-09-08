@@ -276,7 +276,7 @@ SET (DYNAMIC_LIBS
     fastdds
     fastcdr
     foonathan_memory-0.7.3
-    ddshelper
+    ddsenabler
     tinyxml2
     prom
     promhttp
