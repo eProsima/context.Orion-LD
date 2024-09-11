@@ -28,6 +28,7 @@ yum -y --nogpgcheck install https://dl.fedoraproject.org/pub/fedora/linux/releas
 mkdir /opt/Fast-DDS
 cd /opt/Fast-DDS
 
+
 #
 # foonathan_memory_vendor
 #
@@ -37,8 +38,9 @@ cd foonathan_memory_vendor
 git checkout master
 cd build
 
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON
 cmake --build . --target install
+
 
 #
 # CDR
@@ -49,8 +51,9 @@ mkdir Fast-CDR/build
 cd Fast-CDR
 git checkout master
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake ..
 cmake --build . --target install
+
 
 #
 # RTPS
@@ -67,8 +70,9 @@ mkdir build
 # nl=$(grep -n "namespace eprosima" $file_bug | awk -F':' '{print $1 ; exit 0}')
 # sed -i "${nl}i #include <unistd.h>\n#include <sys/syscall.h>\n#define gettid() syscall(SYS_gettid)\n" $file_bug
 
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake ..
 cmake --build . --target install
+
 
 #
 # DDS Dev Utils
@@ -78,11 +82,12 @@ git clone https://github.com/eProsima/dev-utils.git
 cd dev-utils
 git checkout main
 mkdir build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake ..
 cmake --build . --target install
 
+
 #
-# DDS Pipe
+# DDS Pipe (3 packages)
 #
 cd /opt/Fast-DDS
 git clone https://github.com/eProsima/ddspipe_core.git
@@ -92,17 +97,17 @@ git clone https://github.com/eProsima/ddspipe_yaml.git
 cd ddspipe_core
 git checkout main
 mkdir build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake ..
 cmake --build . --target install
 
 cd ddspipe_participants
 git checkout main
 mkdir build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake ..
 cmake --build . --target install
 
 cd ddspipe_yaml
 git checkout main
 mkdir build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake ..
 cmake --build . --target install
