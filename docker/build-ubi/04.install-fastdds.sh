@@ -80,8 +80,8 @@ cmake --build . --target install
 # DDS Dev Utils
 #
 cd /opt/Fast-DDS
-git clone https://github.com/eProsima/dev_utils.git
-cd dev_utils
+git clone https://github.com/eProsima/dev-utils.git
+cd dev-utils
 git checkout main
 
 mkdir -p build/cmake_utils
