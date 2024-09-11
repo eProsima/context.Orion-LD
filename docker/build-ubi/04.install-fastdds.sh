@@ -25,19 +25,20 @@ dnf config-manager --set-enabled powertools
 yum -y install tinyxml2-devel boost-devel
 yum -y --nogpgcheck install https://dl.fedoraproject.org/pub/fedora/linux/releases/39/Everything/x86_64/os/Packages/a/asio-devel-1.28.1-2.fc39.x86_64.rpm
 
+
+# Fast-DDS
 mkdir /opt/Fast-DDS
-cd /opt/Fast-DDS
 
 
 #
 # foonathan_memory_vendor
 #
+cd /opt/Fast-DDS
 git clone https://github.com/eProsima/foonathan_memory_vendor.git
-mkdir foonathan_memory_vendor/build
 cd foonathan_memory_vendor
 git checkout master
+mkdir build
 cd build
-
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON
 cmake --build . --target install
 
@@ -47,9 +48,9 @@ cmake --build . --target install
 #
 cd /opt/Fast-DDS
 git clone https://github.com/eProsima/Fast-CDR.git
-mkdir Fast-CDR/build
 cd Fast-CDR
 git checkout master
+mkdir build
 cd build
 cmake ..
 cmake --build . --target install
