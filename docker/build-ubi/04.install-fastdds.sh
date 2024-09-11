@@ -34,7 +34,7 @@ cd /opt/Fast-DDS
 git clone https://github.com/eProsima/foonathan_memory_vendor.git
 mkdir foonathan_memory_vendor/build
 cd foonathan_memory_vendor
-git checkout v1.3.1 
+git checkout master
 cd build
 
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
@@ -47,7 +47,7 @@ cd /opt/Fast-DDS
 git clone https://github.com/eProsima/Fast-CDR.git
 mkdir Fast-CDR/build
 cd Fast-CDR
-git checkout v2.1.3
+git checkout master
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
 cmake --build . --target install
@@ -58,14 +58,51 @@ cmake --build . --target install
 cd /opt/Fast-DDS
 git clone https://github.com/eProsima/Fast-DDS.git
 cd Fast-DDS
-git checkout v2.13.3
+git checkout master
 mkdir build
 
 ## Prevent glibc bug: https://stackoverflow.com/questions/30680550/c-gettid-was-not-declared-in-this-scope
-file_bug="/opt/Fast-DDS/Fast-DDS/src/cpp/utils/threading/threading_pthread.ipp"
-nl=$(grep -n "namespace eprosima" $file_bug | awk -F':' '{print $1 ; exit 0}')
-sed -i "${nl}i #include <unistd.h>\n#include <sys/syscall.h>\n#define gettid() syscall(SYS_gettid)\n" $file_bug
+#  Seems to be fixed already manually by eProsima
+# file_bug="/opt/Fast-DDS/Fast-DDS/src/cpp/utils/threading/threading_pthread.ipp"
+# nl=$(grep -n "namespace eprosima" $file_bug | awk -F':' '{print $1 ; exit 0}')
+# sed -i "${nl}i #include <unistd.h>\n#include <sys/syscall.h>\n#define gettid() syscall(SYS_gettid)\n" $file_bug
 
-cd build
-cmake ..  -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake --build . --target install
+
+#
+# DDS Dev Utils
+#
+cd /opt/Fast-DDS
+git clone https://github.com/eProsima/dev-utils.git
+cd dev-utils
+git checkout main
+mkdir build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake --build . --target install
+
+#
+# DDS Pipe
+#
+cd /opt/Fast-DDS
+git clone https://github.com/eProsima/ddspipe_core.git
+git clone https://github.com/eProsima/ddspipe_participants.git
+git clone https://github.com/eProsima/ddspipe_yaml.git
+
+cd ddspipe_core
+git checkout main
+mkdir build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake --build . --target install
+
+cd ddspipe_participants
+git checkout main
+mkdir build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
+cmake --build . --target install
+
+cd ddspipe_yaml
+git checkout main
+mkdir build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local/ -DBUILD_SHARED_LIBS=ON
 cmake --build . --target install
