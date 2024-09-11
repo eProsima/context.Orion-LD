@@ -63,6 +63,7 @@ git clone https://github.com/eProsima/Fast-DDS.git
 cd Fast-DDS
 git checkout master
 mkdir build
+cd build
 
 ## Prevent glibc bug: https://stackoverflow.com/questions/30680550/c-gettid-was-not-declared-in-this-scope
 #  Seems to be fixed already manually by eProsima
@@ -82,6 +83,7 @@ git clone https://github.com/eProsima/dev-utils.git
 cd dev-utils
 git checkout main
 mkdir build
+cd build
 cmake ..
 cmake --build . --target install
 
@@ -97,17 +99,20 @@ git clone https://github.com/eProsima/ddspipe_yaml.git
 cd ddspipe_core
 git checkout main
 mkdir build
+cd build
 cmake ..
 cmake --build . --target install
 
 cd ddspipe_participants
 git checkout main
 mkdir build
+cd build
 cmake ..
 cmake --build . --target install
 
 cd ddspipe_yaml
 git checkout main
 mkdir build
+cd build
 cmake ..
 cmake --build . --target install
