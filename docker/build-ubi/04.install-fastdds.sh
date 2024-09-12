@@ -92,7 +92,7 @@ cmake --build . --target install
 cd -
 mkdir -p build/cpp_utils
 cd build/cpp_utils
-cmake ../../cmake_utils
+cmake ../../cpp_utils
 cmake --build . --target install
 
 
