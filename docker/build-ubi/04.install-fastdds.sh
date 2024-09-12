@@ -44,7 +44,7 @@ cmake --build . --target install
 
 
 #
-# CDR
+# Fast-CDR
 #
 cd /opt/Fast-DDS
 git clone https://github.com/eProsima/Fast-CDR.git
@@ -57,7 +57,7 @@ cmake --build . --target install
 
 
 #
-# RTPS
+# Fast-DDS
 #
 cd /opt/Fast-DDS
 git clone https://github.com/eProsima/Fast-DDS.git
