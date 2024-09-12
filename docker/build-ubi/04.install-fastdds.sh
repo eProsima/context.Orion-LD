@@ -77,7 +77,7 @@ cmake --build . --target install
 
 
 #
-# DDS Dev Utils
+# DDS Dev Utils (2 packages in one)
 #
 cd /opt/Fast-DDS
 git clone https://github.com/eProsima/dev-utils.git
@@ -86,40 +86,38 @@ git checkout main
 
 mkdir -p build/cmake_utils
 cd build/cmake_utils
-cmake ..
+cmake ../../cmake_utils
 cmake --build . --target install
 
 cd -
 mkdir -p build/cpp_utils
 cd build/cpp_utils
-cmake ..
+cmake ../../cmake_utils
 cmake --build . --target install
 
 
 #
-# DDS Pipe (3 packages)
+# DDS Pipe (3 packages in one)
 #
 cd /opt/Fast-DDS
-git clone https://github.com/eProsima/ddspipe_core.git
-git clone https://github.com/eProsima/ddspipe_participants.git
-git clone https://github.com/eProsima/ddspipe_yaml.git
+git clone https://github.com/eProsima/DDS-Pipe.git
+cd DDS-Pipe
+git checkout main
+
 
 cd ddspipe_core
-git checkout main
 mkdir build
 cd build
 cmake ..
 cmake --build . --target install
 
-cd ddspipe_participants
-git checkout main
+cd ../../ddspipe_participants
 mkdir build
 cd build
 cmake ..
 cmake --build . --target install
 
-cd ddspipe_yaml
-git checkout main
+cd ../../ddspipe_yaml
 mkdir build
 cd build
 cmake ..
